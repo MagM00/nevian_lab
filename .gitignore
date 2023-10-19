@@ -1,4 +1,4 @@
 # Generated helpsearch folders
-*.npy
-*.csv
-*.xlsx
+**/*.npy
+**/*.csv
+**/*.xlsx
