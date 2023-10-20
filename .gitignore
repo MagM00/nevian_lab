@@ -1,5 +1,9 @@
-# Generated helpsearch folders
+**/.DS_Store
+
+**/*.png
+**/*.jpg
+**/*.bmp
+
 **/*.npy
 **/*.csv
 **/*.xlsx
-**/.DS_Store
