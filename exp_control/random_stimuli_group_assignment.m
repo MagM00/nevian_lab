@@ -3,14 +3,14 @@ clc
 n_animals = 6;
 
 % stimuli = {'cold', 'heat', 'pinprick', '2g', '0.4g', '0.07g'};
-stimuli = {'cold', 'heat', 'pinprick', '2g', '0.4g', '0.07g'};
+stimuli = {'cold', 'room', 'heat', 'pinprick', '2g', '0.4g', '0.07g'};
 
 n_stim = length(stimuli);
 n_trials = 6;
 
 for i_rep = 1:n_animals
     r= cell(n_trials,n_stim);
-    for raw = 1:length(r)
+    for raw = 1:length(r)-1
         r(raw,:) = stimuli(randperm(n_stim));
     end
     disp(r)
