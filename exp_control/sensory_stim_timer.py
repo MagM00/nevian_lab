@@ -311,7 +311,7 @@ class TimerGUI:
                     self.upcoming_events.pop(0)
 
             if self.timer_running:
-                self.root.after(991, self.countup)
+                self.root.after(998, self.countup)
 
     def stop_timer(self):
         self.timer_running = False
