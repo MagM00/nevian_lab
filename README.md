@@ -1,3 +1,3 @@
 # nevian_lab
 
-Repo for projects and codes in Nevian lab
+Repo for projects and associated codes in Nevian lab
