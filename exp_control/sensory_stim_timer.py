@@ -436,7 +436,8 @@ def toggle_fullscreen(event=None):
         root.attributes('-fullscreen', True)
         root.overrideredirect(True)  # Hide the window decorations
 
-# Bind the F11 key to toggle full-screen mode
+# Bind both the Escape key and the spacebar to toggle full-screen mode
 root.bind('<Escape>', toggle_fullscreen)
+root.bind('<space>', toggle_fullscreen)
 
 root.mainloop()
