@@ -396,7 +396,7 @@ class TimerGUI:
                 upcoming_event = self.upcoming_events[0]
                 time_diff = upcoming_event - datetime.strptime(formatted_time, "%H:%M:%S")
 
-                if time_diff <= timedelta(seconds=30):
+                if time_diff <= timedelta(seconds=15):
                     self.event_label["text"] = f"Upcoming: {upcoming_event.strftime('%H:%M:%S')} ({time_diff.seconds}s)"
                     event_index = len(data[self.current_set]["Time"]) - len(self.upcoming_events)
                     event_type_mapping = {
@@ -422,6 +422,15 @@ class TimerGUI:
 
     def stop_timer(self):
         self.timer_running = False
+    
+    def pause_timer(self, event=None):
+        if self.timer_running:
+            self.timer_running = False
+            self.begin_button["state"] = tk.NORMAL  # Enable the Begin button when paused
+        else:
+            self.timer_running = True
+            self.begin_button["state"] = tk.DISABLED  # Disable the Begin button when running
+            self.countup()
 
 root = tk.Tk()
 root.attributes("-fullscreen", True)  # Make the GUI full screen
@@ -439,5 +448,6 @@ def toggle_fullscreen(event=None):
 # Bind both the Escape key and the spacebar to toggle full-screen mode
 root.bind('<Escape>', toggle_fullscreen)
 root.bind('<space>', toggle_fullscreen)
+root.bind('p', app.pause_timer)  # Bind 'p' key to pause/resume the timer
 
 root.mainloop()
