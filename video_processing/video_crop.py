@@ -1,3 +1,5 @@
+# © Jun Huang 2023.12.04
+# video cropping tool for Magdalena and Kristina's mice social behavior (fiber photometry recording) videos
 import cv2
 import tkinter as tk
 import os
