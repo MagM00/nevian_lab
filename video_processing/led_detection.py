@@ -1,7 +1,6 @@
 # © Jun Huang 2023.12.07
-import os
 
-# Specify the directory path
+""" # Specify the directory path
 base_path = r'E:\sensory_stim\behavior\control'
 
 # Initialize lists to store subfolder names and paths of first videos
@@ -20,7 +19,7 @@ for root, dirs, files in os.walk(base_path):
 # Print the subfolder names and paths of the first videos
 print("Subfolder names starting with 'JH':")
 print(subfolder_names)
-print("\nPaths of the first videos in respective subfolders:")
+print("\nPaths of the first videos in respective subfolders:") """
 """ first_video_paths = [
     'E:\\sensory_stim\\behavior\\control\\JH516\\20231123_113730A.mp4',
     'E:\\sensory_stim\\behavior\\control\\JH517\\20231124_115727A.mp4',
