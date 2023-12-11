@@ -9,39 +9,9 @@ function videos_concatenation(input_dir, output_file, remove_raw)
     %               contain all the concatenation of the videos <
     %%
     % Get info on animal and sessions to analyze
-    
-    % remove_raw = 0;
-    do_copy_files = 0;
-
-   
+        do_copy_files = 0;
     FFmpeg_exe = 'M:\Software\FFmpeg\bin\ffmpeg.exe';
-
-    %for i_sess = 1:n_sessions
-        % Get info on this session
-
     video_path = input_dir;
-    % video_path = fullfile(ori_videos_path, this_session_date, this_session_name);
-    % video_folder_destination = output_dir;
-    %if ~exist(video_folder_destination, 'dir'), mkdir(video_folder_destination), end
-    % cameras = dir(video_path);
-    % cameras = {cameras.name}';
-    %cameras = cameras(cellfun(@(x) endsWith(x, '.mp4'), cameras));
-    %n_cameras = length(cameras);
-    
-    % if n_cameras == 0
-    %    sprintf('No videos were found')
-    %     continue
-    % else
-    %     sprintf('Found videos from %i cameras',n_cameras)
-    % end
-    %             folder_items = dir(video_path);
-    %             if sum(endsWith({folder_items.name}, '.mp4')) == 2 && ~overwrite
-    %                 log(sprintf('Videos already concatenated for %s - %s - %s', animal_ID, this_session_date, this_session_experiment))
-    %                 continue
-    %             end
-    
-    % output
-    %filename = video_folder_destination;
     
     % Get the videos inside this folder
     videos = dir(video_path);
@@ -79,14 +49,10 @@ function videos_concatenation(input_dir, output_file, remove_raw)
         fprintf('\t\tdone')
     end
 
-    % Copy concatenated file to local folder
-    % TODO: fix this
     if do_copy_files
         sprintf('\tCopying video to ''%s''', output_file)
         copyfile(filename, output_file)
         log('\t\tdone')
     end
-        
-   % end
 
 end
