@@ -9,6 +9,7 @@ class VideoPlayer:
     def __init__(self, window, window_title):
         self.window = window
         self.window.title(window_title)
+        self.window.attributes('-fullscreen', True)
         
         # Canvas for video playback
         self.canvas = tk.Canvas(window, width=1600, height=900)
