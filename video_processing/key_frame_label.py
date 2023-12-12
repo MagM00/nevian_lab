@@ -19,7 +19,7 @@ class VideoPlayer:
         self.frame_number.pack()
 
         # Slider for frame navigation
-        self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900)
+        self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900, command=self.slider_used)
         self.slider.pack(fill=tk.X)
 
         # Event selection using radio buttons
@@ -53,11 +53,11 @@ class VideoPlayer:
         self.btn_backward_900 = tk.Button(window, text="Backward 900 frames", command=lambda: self.jump_frames(-900))
         self.btn_backward_900.pack(side=tk.LEFT)
 
-        self.btn_forward_10 = tk.Button(window, text="Forward 10 frames", command=lambda: self.jump_frames(10))
-        self.btn_forward_10.pack(side=tk.LEFT)
+        self.btn_forward_100 = tk.Button(window, text="Forward 100 frames", command=lambda: self.jump_frames(100))
+        self.btn_forward_100.pack(side=tk.LEFT)
 
-        self.btn_backward_10 = tk.Button(window, text="Backward 10 frames", command=lambda: self.jump_frames(-10))
-        self.btn_backward_10.pack(side=tk.LEFT)
+        self.btn_backward_100 = tk.Button(window, text="Backward 100 frames", command=lambda: self.jump_frames(-100))
+        self.btn_backward_100.pack(side=tk.LEFT)
 
         self.video_source = None
         self.vid = None
@@ -67,13 +67,15 @@ class VideoPlayer:
         self.video_source = filedialog.askopenfilename()
         if self.video_source:
             self.vid = cv2.VideoCapture(self.video_source)
-            self.slider.configure(to=self.vid.get(cv2.CAP_PROP_FRAME_COUNT) - 1)
+            total_frames = int(self.vid.get(cv2.CAP_PROP_FRAME_COUNT))
+            self.slider.configure(to=total_frames - 1)
             self.update()
 
-    def slider_used(self, _):
+    def slider_used(self, event):
         if self.vid:
-            frame_no = self.slider.get()
+            frame_no = int(self.slider.get())
             self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+            self.update_frame_number(frame_no)
             self.update()
 
     def jump_frames(self, frame_count):
@@ -82,6 +84,7 @@ class VideoPlayer:
             frame_no = max(0, min(frame_no, self.vid.get(cv2.CAP_PROP_FRAME_COUNT) - 1))
             self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
             self.slider.set(frame_no)
+            self.update_frame_number(frame_no)
             self.update()
 
     def log_event(self):
@@ -89,26 +92,21 @@ class VideoPlayer:
             current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
             event_text = [key for key, value in self.event_options.items() if value == self.event_var.get()][0]
             self.log_data.append([event_text, current_frame])
-            # Print the logged event in terminal
             print(f"Logged Event: {event_text}, Frame: {current_frame}")
-            # Save to Excel file
             df = pd.DataFrame(self.log_data, columns=['Event', 'Frame'])
             df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
+
+    def update_frame_number(self, frame_no):
+        self.frame_number.delete(0, tk.END)
+        self.frame_number.insert(0, str(frame_no))
 
     def update(self):
         if self.vid:
             ret, frame = self.vid.read()
             if ret:
-                # Resize frame to fit the canvas
                 frame = self.resize_frame(frame, 1600, 900)
                 self.photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
                 self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
-
-                # Update frame number
-                current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
-                self.frame_number.delete(0, tk.END)
-                self.frame_number.insert(0, str(current_frame))
-                self.slider.set(current_frame)
 
     def resize_frame(self, frame, width, height):
         (h, w) = frame.shape[:2]
