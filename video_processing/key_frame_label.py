@@ -25,13 +25,13 @@ class VideoPlayer:
         # Event selection using radio buttons
         self.event_var = tk.StringVar()
         self.event_options = {
-            "4: Cold water": "4",
-            "5: Room temp": "5",
-            "6: Hot water": "6",
             "0: Pinprick": "0",
             "1: 0.07g": "1",
             "2: 0.4g": "2",
-            "3: 2g": "3"
+            "3: 2g": "3",
+            "4: Cold water": "4",
+            "5: Room temp": "5",
+            "6: Hot water": "6"
         }
         self.radio_frame = tk.Frame(window)
         self.radio_frame.pack()
