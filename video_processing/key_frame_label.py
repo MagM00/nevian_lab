@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import filedialog
 import cv2
 import pandas as pd
 from PIL import Image, ImageTk
@@ -19,16 +19,24 @@ class VideoPlayer:
         self.frame_number.pack()
 
         # Slider for frame navigation
-        self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, command=self.slider_used)
-        self.slider.pack()
+        self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900)
+        self.slider.pack(fill=tk.X)
 
-        # Dropdown menu for event logging
-        self.event_var = tk.StringVar(window)
-        self.event_options = {"4: Cold water", "5: Room temp", "6: Hot water", 
-                              "0: Pinprick", "1: 0.07g", "2: 0.4g", "3: 2g"}
-        self.event_var.set("Select Event")
-        self.dropdown = tk.OptionMenu(window, self.event_var, *self.event_options)
-        self.dropdown.pack()
+        # Event selection using radio buttons
+        self.event_var = tk.StringVar()
+        self.event_options = {
+            "4: Cold water": "4",
+            "5: Room temp": "5",
+            "6: Hot water": "6",
+            "0: Pinprick": "0",
+            "1: 0.07g": "1",
+            "2: 0.4g": "2",
+            "3: 2g": "3"
+        }
+        self.radio_frame = tk.Frame(window)
+        self.radio_frame.pack()
+        for (text, value) in self.event_options.items():
+            tk.Radiobutton(self.radio_frame, text=text, variable=self.event_var, value=value).pack(side=tk.LEFT)
 
         # Log button
         self.btn_log = tk.Button(window, text="Log Event", command=self.log_event)
@@ -77,9 +85,12 @@ class VideoPlayer:
             self.update()
 
     def log_event(self):
-        if self.vid and self.event_var.get() != "Select Event":
+        if self.vid and self.event_var.get():
             current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
-            self.log_data.append([self.event_var.get(), current_frame])
+            event_text = [key for key, value in self.event_options.items() if value == self.event_var.get()][0]
+            self.log_data.append([event_text, current_frame])
+            # Print the logged event in terminal
+            print(f"Logged Event: {event_text}, Frame: {current_frame}")
             # Save to Excel file
             df = pd.DataFrame(self.log_data, columns=['Event', 'Frame'])
             df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
@@ -100,12 +111,9 @@ class VideoPlayer:
                 self.slider.set(current_frame)
 
     def resize_frame(self, frame, width, height):
-        # Calculate aspect ratio
         (h, w) = frame.shape[:2]
         r = width / float(w)
         dim = (width, int(h * r))
-
-        # Resize image
         resized = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
         return cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
 
