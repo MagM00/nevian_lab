@@ -11,7 +11,7 @@ class VideoPlayer:
         self.window.title(window_title)
         
         # Canvas for video playback
-        self.canvas = tk.Canvas(window, width=1920, height=1080)
+        self.canvas = tk.Canvas(window, width=1200, height=900)
         self.canvas.pack()
 
         # Frame number display
