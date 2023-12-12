@@ -11,7 +11,7 @@ class VideoPlayer:
         self.window.title(window_title)
         
         # Canvas for video playback
-        self.canvas = tk.Canvas(window, width=1200, height=900)
+        self.canvas = tk.Canvas(window, width=1600, height=900)
         self.canvas.pack()
 
         # Frame number display
@@ -88,7 +88,9 @@ class VideoPlayer:
         if self.vid:
             ret, frame = self.vid.read()
             if ret:
-                self.photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
+                # Resize frame to fit the canvas
+                frame = self.resize_frame(frame, 1600, 900)
+                self.photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
                 self.canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
 
                 # Update frame number
@@ -96,6 +98,16 @@ class VideoPlayer:
                 self.frame_number.delete(0, tk.END)
                 self.frame_number.insert(0, str(current_frame))
                 self.slider.set(current_frame)
+
+    def resize_frame(self, frame, width, height):
+        # Calculate aspect ratio
+        (h, w) = frame.shape[:2]
+        r = width / float(w)
+        dim = (width, int(h * r))
+
+        # Resize image
+        resized = cv2.resize(frame, dim, interpolation=cv2.INTER_AREA)
+        return cv2.cvtColor(resized, cv2.COLOR_BGR2RGB)
 
     def __del__(self):
         if self.vid:
