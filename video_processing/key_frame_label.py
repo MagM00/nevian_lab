@@ -9,7 +9,13 @@ class VideoPlayer:
     def __init__(self, window, window_title):
         self.window = window
         self.window.title(window_title)
-        self.window.attributes('-fullscreen', True)
+
+        # Set window to full-screen mode
+        self.is_full_screen = True
+        self.window.attributes('-fullscreen', self.is_full_screen)
+
+        # Bind the ESC key to the toggle_full_screen method
+        self.window.bind('<Escape>', self.toggle_full_screen)
         
         # Canvas for video playback
         self.canvas = tk.Canvas(window, width=1600, height=900)
@@ -126,6 +132,12 @@ class VideoPlayer:
     def __del__(self):
         if self.vid:
             self.vid.release()
+    
+    def toggle_full_screen(self, event=None):
+        self.is_full_screen = not self.is_full_screen
+        self.window.attributes('-fullscreen', self.is_full_screen)
+        if not self.is_full_screen:
+            self.window.state('zoomed')  # This maximizes the window
 
 # Create a window and pass it to the video player
 root = tk.Tk()
