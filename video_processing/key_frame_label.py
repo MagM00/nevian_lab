@@ -28,6 +28,9 @@ class VideoPlayer:
         self.frame_number = tk.Entry(window)
         self.frame_number.pack()
 
+        # Bind Enter key in the frame number entry to jump_to_frame method
+        self.frame_number.bind("<Return>", self.jump_to_frame)
+
         # Jump to frame button
         self.btn_jump = tk.Button(window, text="Jump to Frame", command=self.jump_to_frame)
         self.btn_jump.pack()
@@ -152,14 +155,14 @@ class VideoPlayer:
         if event.widget != self.frame_number:
             self.window.focus_set()
 
-    def jump_to_frame(self):
+    def jump_to_frame(self, event=None):
+        # event parameter added to handle the Enter key event
         if self.vid:
             frame_no = int(self.frame_number.get())
             frame_no = max(0, min(frame_no, self.vid.get(cv2.CAP_PROP_FRAME_COUNT) - 1))
             self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
             self.slider.set(frame_no)
             self.update()
-            # Shift focus to the window to stop the cursor from blinking in the Entry widget
             self.window.focus_set()
 
 # Create a window and pass it to the video player
