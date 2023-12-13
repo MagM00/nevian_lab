@@ -30,9 +30,11 @@ class VideoPlayer:
         self.log_frame.pack(side=tk.LEFT, fill=tk.Y)
 
         # Treeview for displaying log data
-        self.log_view = ttk.Treeview(self.log_frame, columns=("Event", "Frame"), show="headings")
+        self.log_view = ttk.Treeview(self.log_frame, columns=("Index", "Event", "Frame"), show="headings")
+        self.log_view.column("Index", width=40, anchor=tk.CENTER)
         self.log_view.column("Event", anchor=tk.CENTER)
         self.log_view.column("Frame", anchor=tk.CENTER)
+        self.log_view.heading("Index", text="Index")
         self.log_view.heading("Event", text="Event")
         self.log_view.heading("Frame", text="Frame")
         self.log_view.pack(side=tk.LEFT, fill=tk.Y)
@@ -138,13 +140,14 @@ class VideoPlayer:
         if self.vid and self.event_var.get():
             current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
             event_text = [key for key, value in self.event_options.items() if value == self.event_var.get()][0]
-            self.log_data.append([event_text, current_frame])
+            event_index = len(self.log_data) + 1  # Index for the new event
+            self.log_data.append([event_index, event_text, current_frame])
             print(f"Logged Event: {event_text}, Frame: {current_frame}")
             
-            # Insert log data into Treeview
-            self.log_view.insert('', 'end', values=(event_text, current_frame))
+            # Insert log data into Treeview with index
+            self.log_view.insert('', 'end', values=(event_index, event_text, current_frame))
             
-            df = pd.DataFrame(self.log_data, columns=['Event', 'Frame'])
+            df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
             df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
 
     def update_frame_number(self, frame_no):
