@@ -4,6 +4,7 @@ import cv2
 import pandas as pd
 from PIL import Image, ImageTk
 import os
+from tkinter import filedialog, ttk  # ttk is imported for Treeview
 
 class VideoPlayer:
     def __init__(self, window, window_title):
@@ -19,10 +20,26 @@ class VideoPlayer:
 
         # Bind mouse click event on the main window
         self.window.bind("<Button-1>", self.on_window_click)
-        
+
+        # Main frame to hold the video and log side by side
+        self.main_frame = tk.Frame(window)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
+
+        # Frame for the Treeview
+        self.log_frame = tk.Frame(self.main_frame)
+        self.log_frame.pack(side=tk.LEFT, fill=tk.Y)
+
+        # Treeview for displaying log data
+        self.log_view = ttk.Treeview(self.log_frame, columns=("Event", "Frame"), show="headings")
+        self.log_view.column("Event", anchor=tk.CENTER)
+        self.log_view.column("Frame", anchor=tk.CENTER)
+        self.log_view.heading("Event", text="Event")
+        self.log_view.heading("Frame", text="Frame")
+        self.log_view.pack(side=tk.LEFT, fill=tk.Y)
+
         # Canvas for video playback
-        self.canvas = tk.Canvas(window, width=1600, height=900)
-        self.canvas.pack()
+        self.canvas = tk.Canvas(self.main_frame, width=1600, height=900)
+        self.canvas.pack(side=tk.RIGHT)
 
         # Frame number display
         self.frame_number = tk.Entry(window)
