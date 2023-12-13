@@ -47,8 +47,8 @@ class VideoFrameGrabber:
 
         width = self.vid.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.vid.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        canvas_width = 800
-        canvas_height = 600
+        canvas_width = 1600
+        canvas_height = 900
         self.canvas.config(width=canvas_width, height=canvas_height, scrollregion=(0, 0, width, height))
         x_scrollbar = tk.Scrollbar(self.root, orient=tk.HORIZONTAL)
         x_scrollbar.pack(fill=tk.X)
@@ -89,7 +89,7 @@ class VideoFrameGrabber:
         self.canvas.unbind("<ButtonPress-1>")
         self.canvas.unbind("<B1-Motion>")
         self.canvas.unbind("<ButtonRelease-1>")
-        self.calculate_average_red_value()
+        self.calculate_average_gray_value()
 
     def calculate_average_gray_value(self):
         if self.vid is not None and self.roi_start is not None and self.roi_end is not None:
@@ -98,25 +98,32 @@ class VideoFrameGrabber:
             frame_count = 0
             start_time = time.time()
             while ret:
-                # Convert to grayscale
-                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                roi_gray = gray_frame[int(self.roi_start[1]):int(self.roi_end[1]), int(self.roi_start[0]):int(self.roi_end[0])]
-                avg_gray = np.mean(roi_gray)
-                self.roi_values.append(avg_gray)
+                if frame_count % 10 == 0:  # Process every tenth frame
+                    # Convert to grayscale and subsample the ROI
+                    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                    roi_gray = gray_frame[int(self.roi_start[1]):int(self.roi_end[1]):4, int(self.roi_start[0]):int(self.roi_end[0]):4]  # Subsample every 4th pixel
+                    avg_gray = np.mean(roi_gray)
+                    self.roi_values.append(avg_gray)
+
                 ret, frame = self.vid.read()
                 frame_count += 1
                 if frame_count % 10000 == 0:
                     elapsed_time = time.time() - start_time
                     print(f"Time spent: {elapsed_time:.2f} sec | Current Frame: {frame_count} / {self.total_frames}")
-            frame_numbers = np.arange(frame_count)
-            plt.plot(frame_numbers, self.roi_values)
+
+            # Interpolate for the frames that were skipped
+            interpolated_values = np.interp(range(self.total_frames), range(0, self.total_frames, 10), self.roi_values)
+
+            frame_numbers = np.arange(self.total_frames)
+            plt.plot(frame_numbers, interpolated_values)
             plt.xlabel('Frame Number')
-            plt.ylabel('Average Gray Value')
-            plt.title(f"{self.basename_without_ext} ROI Average Gray Value over Time")
+            plt.ylabel('Average Gray Value (Interpolated)')
+            plt.title(f"{self.basename_without_ext} ROI Average Gray Value over Time (Interpolated)")
             plt.show()
-            data_array = np.array(self.roi_values)
-            save_path = f"{self.basename_without_ext}_gray_event.npy"
+            data_array = np.array(interpolated_values)
+            save_path = f"{self.basename_without_ext}_gray_event_interpolated.npy"
             np.save(save_path, data_array)
+
 
     def draw_roi(self):
         self.canvas.delete("roi_rectangle")
