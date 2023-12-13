@@ -148,7 +148,9 @@ class VideoPlayer:
 
     def on_window_click(self, event):
         """Handle mouse click events on the window to remove focus from Entry widget."""
-        self.window.focus_set()
+        # Check if the click is outside the Entry widget
+        if event.widget != self.frame_number:
+            self.window.focus_set()
 
     def jump_to_frame(self):
         if self.vid:
