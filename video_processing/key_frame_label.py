@@ -145,7 +145,10 @@ class VideoPlayer:
             print(f"Logged Event: {event_text}, Frame: {current_frame}")
             
             # Insert log data into Treeview with index
-            self.log_view.insert('', 'end', values=(event_index, event_text, current_frame))
+            new_entry = self.log_view.insert('', 'end', values=(event_index, event_text, current_frame))
+            
+            # Ensure the new entry is visible
+            self.log_view.see(new_entry)
             
             df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
             df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
