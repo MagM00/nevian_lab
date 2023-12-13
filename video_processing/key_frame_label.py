@@ -16,6 +16,9 @@ class VideoPlayer:
 
         # Bind the ESC key to the toggle_full_screen method
         self.window.bind('<Escape>', self.toggle_full_screen)
+
+        # Bind mouse click event on the main window
+        self.window.bind("<Button-1>", self.on_window_click)
         
         # Canvas for video playback
         self.canvas = tk.Canvas(window, width=1600, height=900)
@@ -143,6 +146,10 @@ class VideoPlayer:
         if not self.is_full_screen:
             self.window.state('zoomed')  # This maximizes the window
 
+    def on_window_click(self, event):
+        """Handle mouse click events on the window to remove focus from Entry widget."""
+        self.window.focus_set()
+
     def jump_to_frame(self):
         if self.vid:
             frame_no = int(self.frame_number.get())
@@ -150,6 +157,8 @@ class VideoPlayer:
             self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
             self.slider.set(frame_no)
             self.update()
+            # Shift focus to the window to stop the cursor from blinking in the Entry widget
+            self.window.focus_set()
 
 # Create a window and pass it to the video player
 root = tk.Tk()
