@@ -25,6 +25,10 @@ class VideoPlayer:
         self.frame_number = tk.Entry(window)
         self.frame_number.pack()
 
+        # Jump to frame button
+        self.btn_jump = tk.Button(window, text="Jump to Frame", command=self.jump_to_frame)
+        self.btn_jump.pack()
+
         # Slider for frame navigation
         self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900, command=self.slider_used)
         self.slider.pack(fill=tk.X)
@@ -138,6 +142,14 @@ class VideoPlayer:
         self.window.attributes('-fullscreen', self.is_full_screen)
         if not self.is_full_screen:
             self.window.state('zoomed')  # This maximizes the window
+
+    def jump_to_frame(self):
+        if self.vid:
+            frame_no = int(self.frame_number.get())
+            frame_no = max(0, min(frame_no, self.vid.get(cv2.CAP_PROP_FRAME_COUNT) - 1))
+            self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+            self.slider.set(frame_no)
+            self.update()
 
 # Create a window and pass it to the video player
 root = tk.Tk()
