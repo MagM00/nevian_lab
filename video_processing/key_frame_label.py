@@ -103,6 +103,12 @@ class VideoPlayer:
         self.btn_backward_10 = tk.Button(window, text="Backward 10 frames", command=lambda: self.jump_frames(-10))
         self.btn_backward_10.pack(side=tk.LEFT)
 
+        self.btn_backward_1 = tk.Button(window, text="Backward 1 frames", command=lambda: self.jump_frames(-1))
+        self.btn_backward_1.pack(side=tk.LEFT)
+
+        self.btn_forward_1 = tk.Button(window, text="Forward 1 frames", command=lambda: self.jump_frames(1))
+        self.btn_forward_1.pack(side=tk.LEFT)
+
         self.btn_forward_10 = tk.Button(window, text="Forward 10 frames", command=lambda: self.jump_frames(10))
         self.btn_forward_10.pack(side=tk.LEFT)
 
