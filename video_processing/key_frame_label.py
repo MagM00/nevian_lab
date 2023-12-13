@@ -27,7 +27,7 @@ class VideoPlayer:
 
         # Frame for the Treeview
         self.log_frame = tk.Frame(self.main_frame)
-        self.log_frame.pack(side=tk.LEFT, fill=tk.Y)
+        self.log_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Treeview for displaying log data
         self.log_view = ttk.Treeview(self.log_frame, columns=("Index", "Event", "Frame"), show="headings")
@@ -37,11 +37,18 @@ class VideoPlayer:
         self.log_view.heading("Index", text="Index")
         self.log_view.heading("Event", text="Event")
         self.log_view.heading("Frame", text="Frame")
-        self.log_view.pack(side=tk.LEFT, fill=tk.Y)
+        self.log_view.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Adding vertical scrollbar for the Treeview
+        self.tree_scroll = tk.Scrollbar(self.log_frame, orient="vertical", command=self.log_view.yview)
+        self.tree_scroll.pack(side='right', fill='y')
+
+        # Configure the Treeview to use the scrollbar
+        self.log_view.configure(yscrollcommand=self.tree_scroll.set)
 
         # Canvas for video playback
         self.canvas = tk.Canvas(self.main_frame, width=1600, height=900)
-        self.canvas.pack(side=tk.RIGHT)
+        self.canvas.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         # Frame number display
         self.frame_number = tk.Entry(window)
