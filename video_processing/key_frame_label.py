@@ -90,6 +90,8 @@ class VideoPlayer:
         self.btn_load.pack()
 
         # Frame navigation buttons
+        self.btn_backward_1800 = tk.Button(window, text="Backward 1800 frames", command=lambda: self.jump_frames(-1800))
+        self.btn_backward_1800.pack(side=tk.LEFT)
 
         self.btn_backward_900 = tk.Button(window, text="Backward 900 frames", command=lambda: self.jump_frames(-900))
         self.btn_backward_900.pack(side=tk.LEFT)
@@ -120,6 +122,9 @@ class VideoPlayer:
 
         self.btn_forward_900 = tk.Button(window, text="Forward 900 frames", command=lambda: self.jump_frames(900))
         self.btn_forward_900.pack(side=tk.LEFT)
+
+        self.btn_forward_1800 = tk.Button(window, text="Forward 1800 frames", command=lambda: self.jump_frames(1800))
+        self.btn_forward_1800.pack(side=tk.LEFT)
 
         self.video_source = None
         self.vid = None
