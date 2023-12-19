@@ -12,3 +12,5 @@
 **/*.xlsx
 **/*.mat
 **/*.pickle
+
+**/*.zip
