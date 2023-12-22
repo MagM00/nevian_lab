@@ -107,7 +107,7 @@ class VideoFrameGrabber:
 
                 ret, frame = self.vid.read()
                 frame_count += 1
-                if frame_count % 1000 == 0:
+                if frame_count % 10000 == 0:
                     elapsed_time = time.time() - start_time
                     print(f"Time spent: {elapsed_time:.2f} sec | Current Frame: {frame_count} / {self.total_frames}")
 
