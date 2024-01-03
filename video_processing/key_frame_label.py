@@ -82,6 +82,10 @@ class VideoPlayer:
         self.event_dropdown = ttk.Combobox(self.event_control_frame, textvariable=self.event_var)
         self.event_dropdown['values'] = list(self.event_options.keys())
         self.event_dropdown.pack(side=tk.LEFT)
+
+        # Log button
+        self.btn_log = tk.Button(self.event_control_frame, text="Log Event", command=self.log_event)
+        self.btn_log.pack(side=tk.LEFT)
         
         # Modify Event button
         self.btn_modify = tk.Button(self.event_control_frame, text="Modify Event", command=self.modify_event)
@@ -107,13 +111,9 @@ class VideoPlayer:
         self.btn_load_events = tk.Button(self.event_control_frame, text="Load Unfinished Events", command=self.load_events)
         self.btn_load_events.pack(side=tk.LEFT)
 
-        # Log button
-        self.btn_log = tk.Button(window, text="Log Event", command=self.log_event)
-        self.btn_log.pack()
-
         # Load video button
-        self.btn_load = tk.Button(window, text="Load Video", command=self.load_video)
-        self.btn_load.pack()
+        self.btn_load = tk.Button(self.event_control_frame, text="Load Video", command=self.load_video)
+        self.btn_load.pack(side=tk.LEFT)
 
         # Frame navigation buttons
         self.create_frame_navigation_buttons(window)
