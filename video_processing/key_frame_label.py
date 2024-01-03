@@ -124,11 +124,11 @@ class VideoPlayer:
 
     def create_frame_navigation_buttons(self, window):
         # Place frame navigation buttons
-        navigation_buttons = ["Backward 1800 frames", "Backward 900 frames", "Backward 100 frames",
-                             "Backward 50 frames", "Backward 10 frames", "Backward 1 frame",
-                             "Forward 1 frame", "Forward 10 frames", "Forward 50 frames",
-                             "Forward 100 frames", "Forward 900 frames", "Forward 1800 frames"]
-        frame_steps = [-1800, -900, -100, -50, -10, -1, 1, 10, 50, 100, 900, 1800]
+        navigation_buttons = ["Backward 1800 frames", "Backward 900 frames", "Backward 300 frames", "Backward 100 frames",
+                             "Backward 50 frames", "Backward 10 frames", "Backward 5 frame", "Backward 1 frame",
+                             "Forward 1 frame", "Forward 5 frame", "Forward 10 frames", "Forward 50 frames",
+                             "Forward 100 frames", "Forward 300 frames", "Forward 900 frames", "Forward 1800 frames"]
+        frame_steps = [-1800, -900, -300, -100, -50, -10, -5, -1, 1, 5, 10, 50, 100, 300, 900, 1800]
 
         for text, step in zip(navigation_buttons, frame_steps):
             btn = tk.Button(window, text=text, command=lambda s=step: self.jump_frames(s))
