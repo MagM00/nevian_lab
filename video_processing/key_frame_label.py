@@ -81,6 +81,40 @@ class VideoPlayer:
         for (text, value) in self.event_options.items():
             tk.Radiobutton(self.radio_frame, text=text, variable=self.event_var, value=value).pack(side=tk.LEFT)
 
+        # Event controls frame
+        self.event_control_frame = tk.Frame(window)
+        self.event_control_frame.pack()
+
+        # Dropdown Menu for Event Selection (下拉菜单)
+        self.event_var = tk.StringVar()
+        self.event_dropdown = ttk.Combobox(self.event_control_frame, textvariable=self.event_var)
+        self.event_dropdown['values'] = list(self.event_options.keys())
+        self.event_dropdown.pack(side=tk.LEFT)
+        
+        # Modify Event button
+        self.btn_modify = tk.Button(self.event_control_frame, text="Modify Event", command=self.modify_event)
+        self.btn_modify.pack(side=tk.LEFT)
+
+        # Delete Event button
+        self.btn_delete = tk.Button(self.event_control_frame, text="Delete Event", command=self.delete_event)
+        self.btn_delete.pack(side=tk.LEFT)
+
+        # Move Event Up button
+        self.btn_move_up = tk.Button(self.event_control_frame, text="Move Event Up", command=lambda: self.move_event(-1))
+        self.btn_move_up.pack(side=tk.LEFT)
+
+        # Move Event Down button
+        self.btn_move_down = tk.Button(self.event_control_frame, text="Move Event Down", command=lambda: self.move_event(1))
+        self.btn_move_down.pack(side=tk.LEFT)
+
+        # Sync Button
+        self.btn_sync = tk.Button(self.event_control_frame, text="Sync and Save Events", command=self.sync_events)
+        self.btn_sync.pack(side=tk.LEFT)
+
+        # Load Button
+        self.btn_load_events = tk.Button(self.event_control_frame, text="Load Unfinished Events", command=self.load_events)
+        self.btn_load_events.pack(side=tk.LEFT)
+
         # Log button
         self.btn_log = tk.Button(window, text="Log Event", command=self.log_event)
         self.btn_log.pack()
@@ -215,6 +249,52 @@ class VideoPlayer:
             self.slider.set(frame_no)
             self.update()
             self.window.focus_set()
+
+    def modify_event(self):
+        selected_item = self.log_view.selection()
+        if selected_item:
+            # Ask for new event details and update the log data and Treeview
+            new_event = self.event_var.get()
+            if new_event:
+                index = self.log_view.index(selected_item)
+                current_frame = self.log_data[index][2]  # Preserve the current frame number
+                self.log_data[index] = [index+1, new_event, current_frame]  # Update log data
+                self.log_view.item(selected_item, values=(index+1, new_event, current_frame))  # Update Treeview
+
+    def delete_event(self):
+        selected_item = self.log_view.selection()
+        if selected_item:
+            index = self.log_view.index(selected_item)
+            del self.log_data[index]  # Delete from log data
+            self.log_view.delete(selected_item)  # Delete from Treeview
+
+    def move_event(self, direction):
+        selected_item = self.log_view.selection()
+        if selected_item:
+            index = self.log_view.index(selected_item)
+            if 0 <= index + direction < len(self.log_data):
+                # Swap events in log data
+                self.log_data[index], self.log_data[index + direction] = self.log_data[index + direction], self.log_data[index]
+                # Reinsert the swapped items in the Treeview
+                for i in [index, index + direction]:
+                    self.log_view.delete(i)
+                    self.log_view.insert('', i, values=self.log_data[i])
+
+    def sync_events(self):
+        df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
+        df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
+
+    def load_events(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
+        if file_path:
+            df = pd.read_excel(file_path)
+            self.log_data = df.values.tolist()
+            # Clear existing Treeview entries
+            for i in self.log_view.get_children():
+                self.log_view.delete(i)
+            # Load new entries into the Treeview
+            for log in self.log_data:
+                self.log_view.insert('', 'end', values=log)
 
 # Create a window and pass it to the video player
 root = tk.Tk()
