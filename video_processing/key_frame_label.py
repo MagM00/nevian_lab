@@ -1,10 +1,9 @@
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, ttk
 import cv2
 import pandas as pd
 from PIL import Image, ImageTk
 import os
-from tkinter import filedialog, ttk  # ttk is imported for Treeview
 
 class VideoPlayer:
     def __init__(self, window, window_title):
@@ -65,7 +64,11 @@ class VideoPlayer:
         self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900, command=self.slider_used)
         self.slider.pack(fill=tk.X)
 
-        # Event selection using radio buttons
+        # Event controls frame
+        self.event_control_frame = tk.Frame(window)
+        self.event_control_frame.pack()
+
+        # Dropdown Menu for Event Selection (下拉菜单)
         self.event_var = tk.StringVar()
         self.event_options = {
             "0: Pinprick": "0",
@@ -76,17 +79,6 @@ class VideoPlayer:
             "5: Room temp": "5",
             "6: Hot water": "6"
         }
-        self.radio_frame = tk.Frame(window)
-        self.radio_frame.pack()
-        for (text, value) in self.event_options.items():
-            tk.Radiobutton(self.radio_frame, text=text, variable=self.event_var, value=value).pack(side=tk.LEFT)
-
-        # Event controls frame
-        self.event_control_frame = tk.Frame(window)
-        self.event_control_frame.pack()
-
-        # Dropdown Menu for Event Selection (下拉菜单)
-        self.event_var = tk.StringVar()
         self.event_dropdown = ttk.Combobox(self.event_control_frame, textvariable=self.event_var)
         self.event_dropdown['values'] = list(self.event_options.keys())
         self.event_dropdown.pack(side=tk.LEFT)
@@ -124,45 +116,23 @@ class VideoPlayer:
         self.btn_load.pack()
 
         # Frame navigation buttons
-        self.btn_backward_1800 = tk.Button(window, text="Backward 1800 frames", command=lambda: self.jump_frames(-1800))
-        self.btn_backward_1800.pack(side=tk.LEFT)
-
-        self.btn_backward_900 = tk.Button(window, text="Backward 900 frames", command=lambda: self.jump_frames(-900))
-        self.btn_backward_900.pack(side=tk.LEFT)
-
-        self.btn_backward_100 = tk.Button(window, text="Backward 100 frames", command=lambda: self.jump_frames(-100))
-        self.btn_backward_100.pack(side=tk.LEFT)
-
-        self.btn_backward_50 = tk.Button(window, text="Backward 50 frames", command=lambda: self.jump_frames(-50))
-        self.btn_backward_50.pack(side=tk.LEFT)
-
-        self.btn_backward_10 = tk.Button(window, text="Backward 10 frames", command=lambda: self.jump_frames(-10))
-        self.btn_backward_10.pack(side=tk.LEFT)
-
-        self.btn_backward_1 = tk.Button(window, text="Backward 1 frames", command=lambda: self.jump_frames(-1))
-        self.btn_backward_1.pack(side=tk.LEFT)
-
-        self.btn_forward_1 = tk.Button(window, text="Forward 1 frames", command=lambda: self.jump_frames(1))
-        self.btn_forward_1.pack(side=tk.LEFT)
-
-        self.btn_forward_10 = tk.Button(window, text="Forward 10 frames", command=lambda: self.jump_frames(10))
-        self.btn_forward_10.pack(side=tk.LEFT)
-
-        self.btn_forward_50 = tk.Button(window, text="Forward 50 frames", command=lambda: self.jump_frames(50))
-        self.btn_forward_50.pack(side=tk.LEFT)
-
-        self.btn_forward_100 = tk.Button(window, text="Forward 100 frames", command=lambda: self.jump_frames(100))
-        self.btn_forward_100.pack(side=tk.LEFT)
-
-        self.btn_forward_900 = tk.Button(window, text="Forward 900 frames", command=lambda: self.jump_frames(900))
-        self.btn_forward_900.pack(side=tk.LEFT)
-
-        self.btn_forward_1800 = tk.Button(window, text="Forward 1800 frames", command=lambda: self.jump_frames(1800))
-        self.btn_forward_1800.pack(side=tk.LEFT)
+        self.create_frame_navigation_buttons(window)
 
         self.video_source = None
         self.vid = None
         self.log_data = []
+
+    def create_frame_navigation_buttons(self, window):
+        # Place frame navigation buttons
+        navigation_buttons = ["Backward 1800 frames", "Backward 900 frames", "Backward 100 frames",
+                             "Backward 50 frames", "Backward 10 frames", "Backward 1 frame",
+                             "Forward 1 frame", "Forward 10 frames", "Forward 50 frames",
+                             "Forward 100 frames", "Forward 900 frames", "Forward 1800 frames"]
+        frame_steps = [-1800, -900, -100, -50, -10, -1, 1, 10, 50, 100, 900, 1800]
+
+        for text, step in zip(navigation_buttons, frame_steps):
+            btn = tk.Button(window, text=text, command=lambda s=step: self.jump_frames(s))
+            btn.pack(side=tk.LEFT)
 
     def load_video(self):
         self.video_source = filedialog.askopenfilename()
@@ -191,19 +161,21 @@ class VideoPlayer:
     def log_event(self):
         if self.vid and self.event_var.get():
             current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
-            event_text = [key for key, value in self.event_options.items() if value == self.event_var.get()][0]
-            event_index = len(self.log_data) + 1  # Index for the new event
-            self.log_data.append([event_index, event_text, current_frame])
-            print(f"Logged Event: {event_text}, Frame: {current_frame}")
-            
-            # Insert log data into Treeview with index
-            new_entry = self.log_view.insert('', 'end', values=(event_index, event_text, current_frame))
-            
-            # Ensure the new entry is visible
-            self.log_view.see(new_entry)
-            
-            df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
-            df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
+            event_text = self.event_var.get()  # Directly use the selected event text
+            # Ensure the event_text is actually one of the options
+            if event_text in self.event_options:
+                event_index = len(self.log_data) + 1  # Index for the new event
+                self.log_data.append([event_index, event_text, current_frame])
+                print(f"Logged Event: {event_text}, Frame: {current_frame}")
+                
+                # Insert log data into Treeview with index
+                new_entry = self.log_view.insert('', 'end', values=(event_index, event_text, current_frame))
+                
+                # Ensure the new entry is visible
+                self.log_view.see(new_entry)
+                
+                df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
+                df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
 
     def update_frame_number(self, frame_no):
         self.frame_number.delete(0, tk.END)
