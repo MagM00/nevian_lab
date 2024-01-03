@@ -115,23 +115,30 @@ class VideoPlayer:
         self.btn_load = tk.Button(self.event_control_frame, text="Load Video", command=self.load_video)
         self.btn_load.pack(side=tk.LEFT)
 
-        # Frame navigation buttons
-        self.create_frame_navigation_buttons(window)
+        # Frame navigation buttons frame
+        self.frame_nav_buttons_frame = tk.Frame(window)
+        self.frame_nav_buttons_frame.pack(fill=tk.X)  # This will allow the frame to expand to fill the width
+
+        # Call to create navigation buttons
+        self.create_frame_navigation_buttons(self.frame_nav_buttons_frame)
 
         self.video_source = None
         self.vid = None
         self.log_data = []
 
-    def create_frame_navigation_buttons(self, window):
-        # Place frame navigation buttons
-        navigation_buttons = ["Backward 1800 frames", "Backward 900 frames", "Backward 300 frames", "Backward 100 frames",
-                             "Backward 50 frames", "Backward 30 frames", "Backward 10 frames", "Backward 5 frames", "Backward 1 frame",
-                             "Forward 1 frame", "Forward 5 frames", "Forward 10 frames", "Forward 30 frames", "Forward 50 frames",
-                             "Forward 100 frames", "Forward 300 frames", "Forward 900 frames", "Forward 1800 frames"]
+    def create_frame_navigation_buttons(self, frame):
+        # Place frame navigation buttons centered
+        navigation_buttons = ["   ⏪ 1800   ", "   ⏪ 900   ", "   ⏪ 300   ", "   ⏪ 100   ",
+                              "   ⏪ 50   ", "   ⏪ 30   ", "   ⏪ 10   ", "   ⏪ 5   ", "   ⏪ 1   ",
+                              "   ⏩ 1   ", "   ⏩ 5   ", "   ⏩ 10   ", "   ⏩ 30   ", "   ⏩ 50   ",
+                              "   ⏩ 100   ", "   ⏩ 300   ", "   ⏩ 900   ", "   ⏩ 1800   "]
         frame_steps = [-1800, -900, -300, -100, -50, -30, -10, -5, -1, 1, 5, 10, 30, 50, 100, 300, 900, 1800]
 
+        inner_frame = tk.Frame(frame)  # Create an inner frame to hold buttons
+        inner_frame.pack(anchor='center')  # Pack the inner frame centered
+
         for text, step in zip(navigation_buttons, frame_steps):
-            btn = tk.Button(window, text=text, command=lambda s=step: self.jump_frames(s))
+            btn = tk.Button(inner_frame, text=text, command=lambda s=step: self.jump_frames(s))
             btn.pack(side=tk.LEFT)
 
     def load_video(self):
