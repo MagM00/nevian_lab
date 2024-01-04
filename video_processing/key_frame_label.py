@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, ttk
+from tkinter import filedialog, ttk, Label
 import cv2
 import pandas as pd
 from PIL import Image, ImageTk
@@ -9,6 +9,14 @@ class VideoPlayer:
     def __init__(self, window, window_title):
         self.window = window
         self.window.title(window_title)
+
+        # Load logo image
+        self.logo_image = ImageTk.PhotoImage(Image.open(logo_path))
+        
+        # Place logo at the top of the window
+        self.logo_label = Label(window, image=self.logo_image)
+        self.logo_label.pack(side="top", pady=10)  # Adjust placement as needed
+
 
         # Set window to full-screen mode
         self.is_full_screen = True
@@ -274,6 +282,8 @@ class VideoPlayer:
             # Load new entries into the Treeview
             for log in self.log_data:
                 self.log_view.insert('', 'end', values=log)
+
+logo_path = "path/to/your/logo.png"  # Change this to the path of your logo file
 
 # Create a window and pass it to the video player
 root = tk.Tk()
