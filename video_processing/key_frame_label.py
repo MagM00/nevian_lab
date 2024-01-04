@@ -89,7 +89,7 @@ class VideoPlayer:
         self.event_dropdown.pack(side=tk.LEFT)
 
         # Log button
-        self.btn_log = tk.Button(self.event_control_frame, text="Log Event", command=self.log_event)
+        self.btn_log = tk.Button(self.event_control_frame, text="📝 Log Event", command=self.log_event)
         self.btn_log.pack(side=tk.LEFT)
         
         # Modify Event button
@@ -107,6 +107,10 @@ class VideoPlayer:
         # Move Event Down button
         self.btn_move_down = tk.Button(self.event_control_frame, text="Move Event Down", command=lambda: self.move_event(1))
         self.btn_move_down.pack(side=tk.LEFT)
+
+        # Bind Move Event Up and Move Event Down keys to corresponding methods
+        self.window.bind("<Up>", lambda event: self.move_event(-1))
+        self.window.bind("<Down>", lambda event: self.move_event(1))
 
         # Sync Button
         self.btn_sync = tk.Button(self.event_control_frame, text="Sync and Save Events", command=self.sync_events)
