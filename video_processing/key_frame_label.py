@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import filedialog, ttk, Label
+from tkinter import filedialog, ttk
 import cv2
 import pandas as pd
 from PIL import Image, ImageTk
