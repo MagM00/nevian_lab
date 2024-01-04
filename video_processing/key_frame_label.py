@@ -137,10 +137,10 @@ class VideoPlayer:
 
     def create_frame_navigation_buttons(self, frame):
         # Place frame navigation buttons centered
-        navigation_buttons = ["   ⏪ 1800   ", "   ⏪ 900   ", "   ⏪ 300   ", "   ⏪ 100   ",
-                              "   ⏪ 50   ", "   ⏪ 30   ", "   ⏪ 10   ", "   ⏪ 5   ", "   ⏪ 1   ",
-                              "   ⏩ 1   ", "   ⏩ 5   ", "   ⏩ 10   ", "   ⏩ 30   ", "   ⏩ 50   ",
-                              "   ⏩ 100   ", "   ⏩ 300   ", "   ⏩ 900   ", "   ⏩ 1800   "]
+        navigation_buttons = ["   ⏪   1800   ", "   ⏪   900   ", "   ⏪   300   ", "   ⏪   100   ",
+                              "   ⏪   50   ", "   ⏪   30   ", "   ⏪   10   ", "   ⏪   5   ", "   ⏪   1   ",
+                              "   ⏩   1   ", "   ⏩   5   ", "   ⏩   10   ", "   ⏩   30   ", "   ⏩   50   ",
+                              "   ⏩   100   ", "   ⏩   300   ", "   ⏩   900   ", "   ⏩   1800   "]
         frame_steps = [-1800, -900, -300, -100, -50, -30, -10, -5, -1, 1, 5, 10, 30, 50, 100, 300, 900, 1800]
 
         inner_frame = tk.Frame(frame)  # Create an inner frame to hold buttons
