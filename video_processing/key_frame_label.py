@@ -66,7 +66,7 @@ class VideoPlayer:
         self.btn_jump.pack()
 
         # Slider for frame navigation
-        self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900, command=self.slider_used)
+        self.slider = tk.Scale(window, from_=0, to=100, orient=tk.HORIZONTAL, length=1900, resolution=1, command=self.slider_used)
         self.slider.pack(fill=tk.X)
 
         # Event controls frame
