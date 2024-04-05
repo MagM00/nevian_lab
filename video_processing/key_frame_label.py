@@ -134,6 +134,42 @@ class VideoPlayer:
         self.video_source = None
         self.vid = None
         self.log_data = []
+        
+        # Initial and maximum frame skip values
+        self.initial_frame_skip = 30
+        self.max_frame_skip = 60
+        self.current_frame_skip = self.initial_frame_skip
+
+        # Timing variable to increase frame skip speed
+        self.key_press_time = 0
+
+        # Bind left and right key events
+        self.window.bind('<Left>', self.on_left_arrow_press)
+        self.window.bind('<Right>', self.on_right_arrow_press)
+        self.window.bind('<KeyRelease-Left>', self.on_key_release)
+        self.window.bind('<KeyRelease-Right>', self.on_key_release)
+
+    def on_left_arrow_press(self, event):
+        # Handle continuous press and speed adjustment
+        self.adjust_frame_skip()
+        self.jump_frames(-self.current_frame_skip)
+
+    def on_right_arrow_press(self, event):
+        # Handle continuous press and speed adjustment
+        self.adjust_frame_skip()
+        self.jump_frames(self.current_frame_skip)
+
+    def on_key_release(self, event):
+        # Reset frame skip to initial value and reset timer
+        self.current_frame_skip = self.initial_frame_skip
+        self.key_press_time = 0
+
+    def adjust_frame_skip(self):
+        # Example logic to increase frame skip speed based on time or consecutive presses
+        self.key_press_time += 1  # Increase time or counter
+        if self.key_press_time >= 5:  # If key is pressed continuously, adjust frame skip
+            self.current_frame_skip = min(self.current_frame_skip + 5, self.max_frame_skip)
+
 
     def create_frame_navigation_buttons(self, frame):
         # Place frame navigation buttons centered
