@@ -119,7 +119,7 @@ class TimerGUI:
     def on_set_select(self, selected_set):
         self.current_set = selected_set
         self.begin_button["state"] = tk.NORMAL
-        first_event_type = "TMT" if data[self.current_set]["Stim"][0] == 1 else "Saline"
+        first_event_type = "TMT" if data[self.current_set]["Stim"][0] == 1 else "Water"
         self.event_type_label["text"] = f"First Event Type: {first_event_type}"
 
     def start_timer(self):
@@ -145,7 +145,7 @@ class TimerGUI:
                     if data[self.current_set]["Stim"][event_index] == 1:
                         self.event_type_label["text"] = "Next Event Type: TMT"
                     else:
-                        self.event_type_label["text"] = "Next Event Type: Saline"
+                        self.event_type_label["text"] = "Next Event Type: Water"
                 else:
                     self.event_label["text"] = ""
                     self.event_type_label["text"] = ""
@@ -153,7 +153,7 @@ class TimerGUI:
                 if time_diff <= timedelta(seconds=0):
                     self.upcoming_events.pop(0)
             if self.timer_running:
-                self.root.after(991, self.countup)
+                self.root.after(998, self.countup)
 
     def stop_timer(self):
         self.timer_running = False
