@@ -14,3 +14,5 @@
 **/*.pickle
 
 **/*.zip
+
+innate_fear/FP_data_test.ipynb
