@@ -284,7 +284,7 @@ plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace
 plt.axvline(x=0, color='k', linestyle='dashed')
 plt.xlabel('Time from puffing (seconds)')
 plt.ylabel('ΔF/F₀ (%)')
-plt.title('GRABda traces for Water / TMT puffs')
+plt.title('Astrocyte Calcium traces for Water / TMT puffs')
 plt.legend()
 # Save the figure as PNG with 300 dpi
 save_path = os.path.join(ppd_files_dir, 'tmt_water_overall.png')
