@@ -16,9 +16,9 @@ from scipy.stats import zscore
 from data_import import import_ppd
 
 # Set the PPD files directory
-#ppd_files_dir = r'H:\fp_test\innate_fear\grabda'
+ppd_files_dir = r'H:\fp_test\innate_fear\grabda'
 #ppd_files_dir = r'H:\fp_test\innate_fear\gcamp'
-ppd_files_dir = r'H:\fp_test\innate_fear\grab5ht'
+#ppd_files_dir = r'H:\fp_test\innate_fear\grab5ht'
 
 # Get a list of all PPD files in the directory
 ppd_files = [f for f in os.listdir(ppd_files_dir) if f.endswith('.ppd')]
@@ -359,3 +359,37 @@ np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
 # trace_water_late_all = np.load('trace_water_late_all.npy')
 # trace_tmt_late_all = np.load('trace_tmt_late_all.npy')
 
+# Extract data for mouse 521
+mouse_number = '521'
+
+# Filter trace data for mouse 521
+tmt_trace_data = trace_data_matrix_tmt  # TMT trial traces
+water_trace_data = trace_data_matrix_water  # Water trial traces
+
+# Create the time vector for the first row
+pre_start = 10
+post_start = 16
+sampling_rate = 130  # Replace with your actual sampling rate
+time_vector = np.arange(-pre_start, post_start, 1/sampling_rate)
+
+# Convert TMT trace data to DataFrame and add time vector as the first row
+df_tmt = pd.DataFrame(tmt_trace_data)
+df_tmt.loc[-1] = time_vector  # Add time vector as the first row
+df_tmt.index = df_tmt.index + 1  # Shift index
+df_tmt.sort_index(inplace=True)  # Sort index
+
+# Convert Water trace data to DataFrame and add time vector as the first row
+df_water = pd.DataFrame(water_trace_data)
+df_water.loc[-1] = time_vector  # Add time vector as the first row
+df_water.index = df_water.index + 1  # Shift index
+df_water.sort_index(inplace=True)  # Sort index
+
+# Save to Excel
+tmt_excel_path = os.path.join(ppd_files_dir, f'{mouse_number}_tmt_traces.xlsx')
+df_tmt.to_excel(tmt_excel_path, index=False)
+
+water_excel_path = os.path.join(ppd_files_dir, f'{mouse_number}_water_traces.xlsx')
+df_water.to_excel(water_excel_path, index=False)
+
+print(f'TMT traces saved to {tmt_excel_path}')
+print(f'Water traces saved to {water_excel_path}')
