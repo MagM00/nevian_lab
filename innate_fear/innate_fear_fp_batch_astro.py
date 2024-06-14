@@ -119,7 +119,7 @@ for ppd_file in ppd_files:
     # Extract the filename without the extension
     filename = os.path.splitext(os.path.basename(ppd_file_path))[0]
     
-    mouse_number = filename[0:3]
+    mouse_number = filename[0:4]
     
     # Load the data from the CSV file
     data = import_ppd(ppd_file_path, low_pass=20, high_pass=0.001)
