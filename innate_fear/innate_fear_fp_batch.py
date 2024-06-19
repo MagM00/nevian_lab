@@ -317,8 +317,8 @@ for ppd_file in ppd_files:
     plt.xlabel('Time (seconds)')
     plt.ylabel('ΔF/F₀ (%)')
     plt.title('Mouse_{mouse_number}_GRABda activities during TMT and Water puff')
-    plt.show()
     plt.savefig(os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_GRABda_activities.png'), dpi=300)
+    plt.close()
 
 # Calculate the mean and SEM for each list
 mean_trace_water = np.mean(trace_water_all, axis=0)
@@ -436,6 +436,4 @@ np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
 # trace_water_late_all = np.load('trace_water_late_all.npy')
 # trace_tmt_late_all = np.load('trace_tmt_late_all.npy')
 
-# Extract data for mouse 521
-mouse_number = '521'
 
