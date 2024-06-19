@@ -15,12 +15,13 @@ from scipy import signal
 from scipy.stats import zscore
 from data_import import import_ppd
 from scipy.signal import savgol_filter
+from openpyxl import load_workbook
 
 # Set the PPD files directory
 #ppd_files_dir = r'H:\fp_test\innate_fear\grabda'
 #ppd_files_dir = r'H:\fp_test\innate_fear\gcamp'
 #ppd_files_dir = r'H:\fp_test\innate_fear\grab5ht'
-ppd_files_dir = r'H:\fp_test\innate_fear\astro\test_jun'
+ppd_files_dir = r'H:\fp_test\innate_fear\astro'
 
 # Get a list of all PPD files in the directory
 ppd_files = [f for f in os.listdir(ppd_files_dir) if f.endswith('.ppd')]
@@ -279,8 +280,8 @@ for ppd_file in ppd_files:
     water_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_water_traces.xlsx')
     #df_water.to_excel(water_excel_path, index=False)
 
-    print(f'TMT traces saved to {tmt_excel_path}')
-    print(f'Water traces saved to {water_excel_path}')  
+    #print(f'TMT traces saved to {tmt_excel_path}')
+    #print(f'Water traces saved to {water_excel_path}')  
 
     smoothed_dFF = savgol_filter(dFF, window_length=51, polyorder=3)  
 
@@ -325,7 +326,7 @@ for ppd_file in ppd_files:
     plt.title('Mouse_' + mouse_number + ' Astrocyte activities during TMT and Water puff')
     #plt.savefig(os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_Astrocyte_activities.png'), dpi=300)
     plt.close()
-    
+
 # Calculate the mean and SEM for each list
 mean_trace_water = np.mean(trace_water_all, axis=0)
 sem_trace_water = np.std(trace_water_all, axis=0) / np.sqrt(len(trace_water_all))
@@ -412,33 +413,71 @@ save_path = os.path.join(ppd_files_dir, 'tmt_water_late.png')
 plt.savefig(save_path, dpi=300)
 plt.close() 
 
-np.save('trace_water_all.npy', np.array(trace_water_all))
-np.save('trace_tmt_all.npy', np.array(trace_tmt_all))
-np.save('trace_water_early_all.npy', np.array(trace_water_early_all))
-np.save('trace_tmt_early_all.npy', np.array(trace_tmt_early_all))
-np.save('trace_water_inter_all.npy', np.array(trace_water_inter_all))
-np.save('trace_tmt_inter_all.npy', np.array(trace_tmt_inter_all))
-np.save('trace_water_late_all.npy', np.array(trace_water_late_all))
-np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
+# Define the new headers
+headers = ['Mouse1193', 'Mouse1194', 'Mouse1195', 'Mouse1196', 'Mouse1198', 'Mouse1199', 'Mouse1200', 'Mouse1201']
 
-## convert your array into a dataframe
-df = pd.DataFrame (np.array(trace_water_all))
-df.to_excel('mean_water.xlsx', index=False)
+# Save each array to an Excel file, transposed, and with new headers
+pd.DataFrame(np.array(trace_water_all).T, columns=headers).to_excel('final_processed_trace_water_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_tmt_all).T, columns=headers).to_excel('final_processed_trace_tmt_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_water_early_all).T, columns=headers).to_excel('final_processed_trace_water_early_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_tmt_early_all).T, columns=headers).to_excel('final_processed_trace_tmt_early_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_water_inter_all).T, columns=headers).to_excel('final_processed_trace_water_inter_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_tmt_inter_all).T, columns=headers).to_excel('final_processed_trace_tmt_inter_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_water_late_all).T, columns=headers).to_excel('final_processed_trace_water_late_all.xlsx', index=False)
+pd.DataFrame(np.array(trace_tmt_late_all).T, columns=headers).to_excel('final_processed_trace_tmt_late_all.xlsx', index=False)
 
-df = pd.DataFrame (np.array(trace_tmt_all))
-df.to_excel('mean_tmt.xlsx', index=False)
+# Create DataFrames
+df_mean_trace_water = pd.DataFrame(np.array(mean_trace_water))
+df_mean_trace_tmt = pd.DataFrame(np.array(mean_trace_tmt))
+df_sem_trace_water = pd.DataFrame(np.array(sem_trace_water))
+df_sem_trace_tmt = pd.DataFrame(np.array(sem_trace_tmt))
 
-df = pd.DataFrame (np.array(sem_water))
-df.to_excel('sem_water.xlsx', index=False)
+df_mean_trace_water_early = pd.DataFrame(np.array(mean_trace_water_early))
+df_mean_trace_tmt_early = pd.DataFrame(np.array(mean_trace_tmt_early))
+df_sem_trace_water_early = pd.DataFrame(np.array(sem_trace_water_early))
+df_sem_trace_tmt_early = pd.DataFrame(np.array(sem_trace_tmt_early))
 
-df = pd.DataFrame (np.array(sem_tmt))
-df.to_excel('sem_tmt.xlsx', index=False)
-trace_water_all = np.load('trace_water_all.npy')
-trace_tmt_all = np.load('trace_tmt_all.npy')
-trace_water_early_all = np.load('trace_water_early_all.npy')
-trace_tmt_early_all = np.load('trace_tmt_early_all.npy')
-trace_water_inter_all = np.load('trace_water_inter_all.npy')
-trace_tmt_inter_all = np.load('trace_tmt_inter_all.npy')
-trace_water_late_all = np.load('trace_water_late_all.npy')
-trace_tmt_late_all = np.load('trace_tmt_late_all.npy')
+df_mean_trace_water_inter = pd.DataFrame(np.array(mean_trace_water_inter))
+df_mean_trace_tmt_inter = pd.DataFrame(np.array(mean_trace_tmt_inter))
+df_sem_trace_water_inter = pd.DataFrame(np.array(sem_trace_water_inter))
+df_sem_trace_tmt_inter = pd.DataFrame(np.array(sem_trace_tmt_inter))
 
+df_mean_trace_water_late = pd.DataFrame(np.array(mean_trace_water_late))
+df_mean_trace_tmt_late = pd.DataFrame(np.array(mean_trace_tmt_late))
+df_sem_trace_water_late = pd.DataFrame(np.array(sem_trace_water_late))
+df_sem_trace_tmt_late = pd.DataFrame(np.array(sem_trace_tmt_late))
+
+# Concatenate DataFrames side by side
+df_combined = pd.concat([df_mean_trace_water, df_sem_trace_water, df_mean_trace_tmt, df_sem_trace_tmt, 
+                         df_mean_trace_water_early, df_sem_trace_water_early, df_mean_trace_tmt_early, df_sem_trace_tmt_early,
+                        df_mean_trace_water_inter, df_sem_trace_water_inter, df_mean_trace_tmt_inter, df_sem_trace_tmt_inter,
+                        df_mean_trace_water_late, df_sem_trace_water_late, df_mean_trace_tmt_late, df_sem_trace_tmt_late
+                         ], axis=1)
+
+# Set column headings
+df_combined.columns = ['mean_trace_water', 'sem_trace_water', 'mean_trace_tmt', 'sem_trace_tmt',
+                       'mean_trace_water_early', 'sem_trace_water_early', 'mean_trace_tmt_early', 'sem_trace_tmt_early',
+                       'mean_trace_water_inter', 'sem_trace_water_inter', 'mean_trace_tmt_inter', 'sem_trace_tmt_inter',
+                       'mean_trace_water_late', 'sem_trace_water_late', 'mean_trace_tmt_late', 'sem_trace_tmt_late']
+
+# Save to a single Excel file
+df_combined.to_excel('combined_data.xlsx', index=False)
+
+# Adjust column widths using openpyxl directly
+wb = load_workbook('combined_data.xlsx')
+ws = wb.active
+
+# Define the column headers
+headers = ['mean_trace_water', 'sem_trace_water', 'mean_trace_tmt', 'sem_trace_tmt',
+            'mean_trace_water_early', 'sem_trace_water_early', 'mean_trace_tmt_early', 'sem_trace_tmt_early',
+            'mean_trace_water_inter', 'sem_trace_water_inter', 'mean_trace_tmt_inter', 'sem_trace_tmt_inter',
+            'mean_trace_water_late', 'sem_trace_water_late', 'mean_trace_tmt_late', 'sem_trace_tmt_late']
+
+# Set the column width based on the length of the headers
+for i, header in enumerate(headers, start=1):
+    max_length = max(len(header), 10)  # Ensure a minimum width of 10 for better readability
+    col_letter = ws.cell(row=1, column=i).column_letter
+    ws.column_dimensions[col_letter].width = max_length
+
+# Save the workbook
+wb.save('grand_avg_traces.xlsx')
