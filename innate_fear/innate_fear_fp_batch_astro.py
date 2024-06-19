@@ -20,13 +20,13 @@ from scipy.signal import savgol_filter
 #ppd_files_dir = r'H:\fp_test\innate_fear\grabda'
 #ppd_files_dir = r'H:\fp_test\innate_fear\gcamp'
 #ppd_files_dir = r'H:\fp_test\innate_fear\grab5ht'
-ppd_files_dir = r'H:\fp_test\innate_fear\astro'
+ppd_files_dir = r'H:\fp_test\innate_fear\astro\test_jun'
 
 # Get a list of all PPD files in the directory
 ppd_files = [f for f in os.listdir(ppd_files_dir) if f.endswith('.ppd')]
 
 timing_data = {
-        'UniBe001': 
+        '0001': 
             {'Stim': [0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0], 
              'Time': ['00:29', '01:27', '01:58', '02:28', '03:22', '03:56', '04:35', '05:23', '06:23', '07:22', 
                       '08:09', '08:55', '09:38', '10:12', '10:53', '11:32', '12:14', '12:59', '13:33', '14:10', 
@@ -36,14 +36,14 @@ timing_data = {
              'Time': ['00:28', '01:03', '01:51', '02:23', '03:23', '04:14', '05:08', '05:57', '06:33', '07:17', 
                       '08:15', '08:54', '09:48', '10:34', '11:28', '12:11', '12:46', '13:29', '14:14', '15:13', 
                       '16:06', '17:01', '17:42', '18:25', '19:22', '20:19', '20:51', '21:25', '22:07', '23:05']}, 
-        'UniBe003': 
+        '0003': 
             {
             'Stim': [0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0], 
             'Time': ['00:29', '01:16', '01:46', '02:27', '03:10', '03:42', '04:18', '04:58', '05:31', '06:28', 
                      '07:27', '08:10', '08:41', '09:22', '10:17', '11:12', '12:03', '12:59', '13:35', '14:21', 
                      '15:12', '16:10', '16:51', '17:39', '18:13', '18:46', '19:35', '20:31', '21:21', '22:12']}, 
 
-        'UniBe004': 
+        '0004': 
             {'Stim': [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0], 
              'Time': ['00:30', '01:29', '02:07', '02:48', '03:39', '04:19', '04:59', '05:46', '06:20', '06:50', 
                       '07:49', '08:38', '09:37', '10:19', '11:16', '12:03', '12:42', '13:34', '14:08', '14:53', 
@@ -82,7 +82,7 @@ timing_data = {
                      '07:38', '08:24', '09:00', '09:50', '10:47', '11:42', '12:24', '13:08', '13:54', '14:53',
                      '15:35', '16:25', '17:13', '18:03', '18:34', '19:04', '19:51', '20:47', '21:18', '21:58']}, 
 
-        'UniBe011': 
+        '0011': 
             {'Stim': [1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 0, 1, 0, 0, 1], 
             'Time': ['00:29', '01:05', '01:42', '02:18', '03:12', '03:45', '04:45', '05:19', '06:01', '06:42', 
              '07:27', '08:27', '09:20', '10:12', '11:11', '12:00', '12:59', '13:33', '14:10', '14:47', 
@@ -274,10 +274,10 @@ for ppd_file in ppd_files:
 
     # Save to Excel
     tmt_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_tmt_traces.xlsx')
-    df_tmt.to_excel(tmt_excel_path, index=False)
+    #df_tmt.to_excel(tmt_excel_path, index=False)
 
     water_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_water_traces.xlsx')
-    df_water.to_excel(water_excel_path, index=False)
+    #df_water.to_excel(water_excel_path, index=False)
 
     print(f'TMT traces saved to {tmt_excel_path}')
     print(f'Water traces saved to {water_excel_path}')  
@@ -302,7 +302,7 @@ for ppd_file in ppd_files:
 
     # Save the DataFrame to an Excel file
     water_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_dFF_with_stim.xlsx')
-    df.to_excel(water_excel_path, index=False)
+    #df.to_excel(water_excel_path, index=False)
 
     # Convert timestamps to sample indices
     time_in_seconds = [time_stamp_to_seconds(ts) for ts in time_stamps]
@@ -323,7 +323,7 @@ for ppd_file in ppd_files:
     plt.xlabel('Time (seconds)')
     plt.ylabel('ΔF/F₀ (%)')
     plt.title('Mouse_' + mouse_number + ' Astrocyte activities during TMT and Water puff')
-    plt.savefig(os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_Astrocyte_activities.png'), dpi=300)
+    #plt.savefig(os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_Astrocyte_activities.png'), dpi=300)
     plt.close()
     
 # Calculate the mean and SEM for each list
@@ -352,10 +352,10 @@ mean_trace_tmt_late = np.mean(trace_tmt_late_all, axis=0)
 sem_trace_tmt_late = np.std(trace_tmt_late_all, axis=0) / np.sqrt(len(trace_tmt_late_all))
 
 
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_all,axis=0) * 100, label='TMT', color='blue')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt - sem_trace_tmt) * 100, (mean_trace_tmt + sem_trace_tmt) * 100, color='blue', alpha=0.3)
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_all,axis=0) * 100, label='Water', color='red')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water - sem_trace_water) * 100, (mean_trace_water + sem_trace_water) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_all,axis=0) * 100, label='TMT', color='red')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt - sem_trace_tmt) * 100, (mean_trace_tmt + sem_trace_tmt) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_all,axis=0) * 100, label='Water', color='blue')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water - sem_trace_water) * 100, (mean_trace_water + sem_trace_water) * 100, color='blue', alpha=0.3)
 #plt.ylim(-0.5, 3.5)
 plt.axvline(x=0, color='k', linestyle='dashed')
 plt.xlabel('Time from puffing (seconds)')
@@ -367,10 +367,10 @@ save_path = os.path.join(ppd_files_dir, 'tmt_water_overall.png')
 plt.savefig(save_path, dpi=300)
 plt.close() 
 
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_early_all,axis=0) * 100, label='TMT', color='blue')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt_early - sem_trace_tmt_early) * 100, (mean_trace_tmt_early + sem_trace_tmt_early) * 100, color='blue', alpha=0.3)
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_early_all,axis=0) * 100, label='Water', color='red')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water_early - sem_trace_water_early) * 100, (mean_trace_water_early + sem_trace_water_early) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_early_all,axis=0) * 100, label='TMT', color='red')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt_early - sem_trace_tmt_early) * 100, (mean_trace_tmt_early + sem_trace_tmt_early) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_early_all,axis=0) * 100, label='Water', color='blue')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water_early - sem_trace_water_early) * 100, (mean_trace_water_early + sem_trace_water_early) * 100, color='blue', alpha=0.3)
 #plt.ylim(-0.5, 3.5)
 plt.axvline(x=0, color='k', linestyle='dashed')
 plt.xlabel('Time from puffing (seconds)')
@@ -382,10 +382,10 @@ save_path = os.path.join(ppd_files_dir, 'tmt_water_early.png')
 plt.savefig(save_path, dpi=300)
 plt.close() 
 
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_inter_all,axis=0) * 100, label='TMT', color='blue')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt_inter - sem_trace_tmt_inter) * 100, (mean_trace_tmt_inter + sem_trace_tmt_inter) * 100, color='blue', alpha=0.3)
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_inter_all,axis=0) * 100, label='Water', color='red')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water_inter - sem_trace_water_inter) * 100, (mean_trace_water_inter + sem_trace_water_inter) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_inter_all,axis=0) * 100, label='TMT', color='red')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt_inter - sem_trace_tmt_inter) * 100, (mean_trace_tmt_inter + sem_trace_tmt_inter) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_inter_all,axis=0) * 100, label='Water', color='blue')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water_inter - sem_trace_water_inter) * 100, (mean_trace_water_inter + sem_trace_water_inter) * 100, color='blue', alpha=0.3)
 #plt.ylim(-0.5, 3.5)
 plt.axvline(x=0, color='k', linestyle='dashed')
 plt.xlabel('Time from puffing (seconds)')
@@ -397,10 +397,10 @@ save_path = os.path.join(ppd_files_dir, 'tmt_water_inter.png')
 plt.savefig(save_path, dpi=300)
 plt.close() 
 
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_late_all,axis=0) * 100, label='TMT', color='blue')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt_late - sem_trace_tmt_late) * 100, (mean_trace_tmt_late + sem_trace_tmt_late) * 100, color='blue', alpha=0.3)
-plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_late_all,axis=0) * 100, label='Water', color='red')
-plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water_late - sem_trace_water_late) * 100, (mean_trace_water_late + sem_trace_water_late) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_tmt_late_all,axis=0) * 100, label='TMT', color='red')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_tmt_late - sem_trace_tmt_late) * 100, (mean_trace_tmt_late + sem_trace_tmt_late) * 100, color='red', alpha=0.3)
+plt.plot(np.arange(-pre_start, post_start, 1/sampling_rate), np.mean(trace_water_late_all,axis=0) * 100, label='Water', color='blue')
+plt.fill_between(np.arange(-pre_start, post_start, 1/sampling_rate), (mean_trace_water_late - sem_trace_water_late) * 100, (mean_trace_water_late + sem_trace_water_late) * 100, color='blue', alpha=0.3)
 #plt.ylim(-0.5, 3.5)
 plt.axvline(x=0, color='k', linestyle='dashed')
 plt.xlabel('Time from puffing (seconds)')
