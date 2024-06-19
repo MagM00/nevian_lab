@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 from scipy import signal
 from scipy.stats import zscore
 from data_import import import_ppd
+from scipy.signal import savgol_filter
 
 # Set the PPD files directory
 #ppd_files_dir = r'H:\fp_test\innate_fear\grabda'
@@ -249,6 +250,81 @@ for ppd_file in ppd_files:
     # if mouse_number == mouse_number: #str('521'):
     #     np.save('trace_tmt_' + mouse_number + '.npy', np.array(trace_data_matrix_tmt))
     #     np.save('trace_water_' + mouse_number + '.npy', np.array(trace_data_matrix_water))
+    # Filter trace data for mouse 521
+    tmt_trace_data = trace_data_matrix_tmt  # TMT trial traces
+    water_trace_data = trace_data_matrix_water  # Water trial traces
+
+    # Create the time vector for the first row
+    pre_start = 10
+    post_start = 16
+    sampling_rate = 130  # Replace with your actual sampling rate
+    time_vector = np.arange(-pre_start, post_start, 1/sampling_rate)
+
+    # Convert TMT trace data to DataFrame and add time vector as the first row
+    df_tmt = pd.DataFrame(tmt_trace_data)
+    df_tmt.loc[-1] = time_vector  # Add time vector as the first row
+    df_tmt.index = df_tmt.index + 1  # Shift index
+    df_tmt.sort_index(inplace=True)  # Sort index
+
+    # Convert Water trace data to DataFrame and add time vector as the first row
+    df_water = pd.DataFrame(water_trace_data)
+    df_water.loc[-1] = time_vector  # Add time vector as the first row
+    df_water.index = df_water.index + 1  # Shift index
+    df_water.sort_index(inplace=True)  # Sort index
+
+    # Save to Excel
+    tmt_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_tmt_traces.xlsx')
+    df_tmt.to_excel(tmt_excel_path, index=False)
+
+    water_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_water_traces.xlsx')
+    df_water.to_excel(water_excel_path, index=False)
+
+    print(f'TMT traces saved to {tmt_excel_path}')
+    print(f'Water traces saved to {water_excel_path}')  
+
+    smoothed_dFF = savgol_filter(dFF, window_length=51, polyorder=3)  
+
+    # Create a dataframe to store the smoothed_dFF, time stamps, and stim data
+    data_length = len(smoothed_dFF)
+    stim_markers = np.full(data_length, -1)
+    time = np.arange(0, len(smoothed_dFF)) / sampling_rate
+
+    for i, index in enumerate(all_data_indexes):
+        stim_markers[index] = stim_data[i]
+
+    # Create a DataFrame
+    df = pd.DataFrame({
+        'Time (seconds)': time,
+        'dFF': dFF,
+        'smoothed_dFF': smoothed_dFF,
+        'Stim': stim_markers
+    })
+
+    # Save the DataFrame to an Excel file
+    water_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_dFF_with_stim.xlsx')
+    df.to_excel(water_excel_path, index=False)
+
+    # Convert timestamps to sample indices
+    time_in_seconds = [time_stamp_to_seconds(ts) for ts in time_stamps]
+    data_indexes = [int(ts * sampling_rate) for ts in time_in_seconds]
+
+    # Set figure size to make the plot wider
+    plt.figure(figsize=(20, 7))
+
+    # Mark the timestamps in the trace array
+    for i, stim in enumerate(stim_data):
+        if stim == 0:
+            plt.axvline(x=time_in_seconds[i], color='gray', linestyle='dashed', ymax=1)
+        else:
+            plt.axvline(x=time_in_seconds[i], color='gray', linestyle='solid', ymax=1)
+
+    plt.plot(time, dFF, label='dFF')
+
+    plt.xlabel('Time (seconds)')
+    plt.ylabel('ΔF/F₀ (%)')
+    plt.title('Mouse_' + mouse_number + ' Astrocyte activities during TMT and Water puff')
+    plt.savefig(os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_Astrocyte_activities.png'), dpi=300)
+    plt.close()
     
 # Calculate the mean and SEM for each list
 mean_trace_water = np.mean(trace_water_all, axis=0)
