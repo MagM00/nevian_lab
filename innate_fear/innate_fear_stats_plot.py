@@ -54,8 +54,8 @@ def calculate_and_plot(file1, file2, trial_type, color1='blue', color2='red'):
     # Adding the individual observations
     for i in range(len(mean_data1)):
         ax.plot([0, 1], [mean_data1_percent[i], mean_data2_percent[i]], color='grey', alpha=0.5)
-        ax.plot(0, mean_data1_percent[i], 'ro')
-        ax.plot(1, mean_data2_percent[i], 'bo')
+        ax.plot(0, mean_data1_percent[i], 'bo')
+        ax.plot(1, mean_data2_percent[i], 'ro')
 
     # Adding the significance
     if p_value < 0.001:
@@ -81,7 +81,7 @@ def calculate_and_plot(file1, file2, trial_type, color1='blue', color2='red'):
     plt.show()
 
 # Function to calculate and plot AUC
-def calculate_and_plot_auc(file1, file2, trial_type, color1='red', color2='blue'):
+def calculate_and_plot_auc(file1, file2, trial_type, color1='blue', color2='red'):
     # Loading the data
     data1 = np.load(file1)
     data2 = np.load(file2)
@@ -121,8 +121,8 @@ def calculate_and_plot_auc(file1, file2, trial_type, color1='red', color2='blue'
     # Adding the individual observations
     for i in range(len(auc_data1)):
         ax.plot([0, 1], [auc_data1_percent[i], auc_data2_percent[i]], color='grey', alpha=0.5)
-        ax.plot(0, auc_data1_percent[i], 'ro')
-        ax.plot(1, auc_data2_percent[i], 'bo')
+        ax.plot(0, auc_data1_percent[i], 'bo')
+        ax.plot(1, auc_data2_percent[i], 'ro')
 
     # Adding the significance
     if p_value < 0.001:
