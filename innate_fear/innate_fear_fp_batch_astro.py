@@ -481,3 +481,13 @@ for i, header in enumerate(headers, start=1):
 
 # Save the workbook
 wb.save('grand_avg_traces.xlsx')
+
+
+np.save('trace_water_all.npy', np.array(trace_water_all))
+np.save('trace_tmt_all.npy', np.array(trace_tmt_all))
+np.save('trace_water_early_all.npy', np.array(trace_water_early_all))
+np.save('trace_tmt_early_all.npy', np.array(trace_tmt_early_all))
+np.save('trace_water_inter_all.npy', np.array(trace_water_inter_all))
+np.save('trace_tmt_inter_all.npy', np.array(trace_tmt_inter_all))
+np.save('trace_water_late_all.npy', np.array(trace_water_late_all))
+np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
