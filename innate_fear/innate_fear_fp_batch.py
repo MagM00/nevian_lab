@@ -242,6 +242,49 @@ for ppd_file in ppd_files:
     # if mouse_number == mouse_number: #str('521'):
     #     np.save('trace_tmt_' + mouse_number + '.npy', np.array(trace_data_matrix_tmt))
     #     np.save('trace_water_' + mouse_number + '.npy', np.array(trace_data_matrix_water))
+
+for ppd_file in ppd_files:
+    ppd_file_path = os.path.join(ppd_files_dir, ppd_file)
+    
+    pre_start = 10
+    #pre_start = 5
+    post_start = 16
+    
+    # Extract the filename without the extension
+    filename = os.path.splitext(os.path.basename(ppd_file_path))[0]
+    
+    mouse_number = filename[0:3] 
+    # Filter trace data for mouse 521
+    tmt_trace_data = trace_data_matrix_tmt  # TMT trial traces
+    water_trace_data = trace_data_matrix_water  # Water trial traces
+
+    # Create the time vector for the first row
+    pre_start = 10
+    post_start = 16
+    sampling_rate = 130  # Replace with your actual sampling rate
+    time_vector = np.arange(-pre_start, post_start, 1/sampling_rate)
+
+    # Convert TMT trace data to DataFrame and add time vector as the first row
+    df_tmt = pd.DataFrame(tmt_trace_data)
+    df_tmt.loc[-1] = time_vector  # Add time vector as the first row
+    df_tmt.index = df_tmt.index + 1  # Shift index
+    df_tmt.sort_index(inplace=True)  # Sort index
+
+    # Convert Water trace data to DataFrame and add time vector as the first row
+    df_water = pd.DataFrame(water_trace_data)
+    df_water.loc[-1] = time_vector  # Add time vector as the first row
+    df_water.index = df_water.index + 1  # Shift index
+    df_water.sort_index(inplace=True)  # Sort index
+
+    # Save to Excel
+    tmt_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_tmt_traces.xlsx')
+    df_tmt.to_excel(tmt_excel_path, index=False)
+
+    water_excel_path = os.path.join(ppd_files_dir, f'Mouse_{mouse_number}_water_traces.xlsx')
+    df_water.to_excel(water_excel_path, index=False)
+
+    print(f'TMT traces saved to {tmt_excel_path}')
+    print(f'Water traces saved to {water_excel_path}')    
     
 # Calculate the mean and SEM for each list
 mean_trace_water = np.mean(trace_water_all, axis=0)
@@ -362,34 +405,3 @@ np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
 # Extract data for mouse 521
 mouse_number = '521'
 
-# Filter trace data for mouse 521
-tmt_trace_data = trace_data_matrix_tmt  # TMT trial traces
-water_trace_data = trace_data_matrix_water  # Water trial traces
-
-# Create the time vector for the first row
-pre_start = 10
-post_start = 16
-sampling_rate = 130  # Replace with your actual sampling rate
-time_vector = np.arange(-pre_start, post_start, 1/sampling_rate)
-
-# Convert TMT trace data to DataFrame and add time vector as the first row
-df_tmt = pd.DataFrame(tmt_trace_data)
-df_tmt.loc[-1] = time_vector  # Add time vector as the first row
-df_tmt.index = df_tmt.index + 1  # Shift index
-df_tmt.sort_index(inplace=True)  # Sort index
-
-# Convert Water trace data to DataFrame and add time vector as the first row
-df_water = pd.DataFrame(water_trace_data)
-df_water.loc[-1] = time_vector  # Add time vector as the first row
-df_water.index = df_water.index + 1  # Shift index
-df_water.sort_index(inplace=True)  # Sort index
-
-# Save to Excel
-tmt_excel_path = os.path.join(ppd_files_dir, f'{mouse_number}_tmt_traces.xlsx')
-df_tmt.to_excel(tmt_excel_path, index=False)
-
-water_excel_path = os.path.join(ppd_files_dir, f'{mouse_number}_water_traces.xlsx')
-df_water.to_excel(water_excel_path, index=False)
-
-print(f'TMT traces saved to {tmt_excel_path}')
-print(f'Water traces saved to {water_excel_path}')
