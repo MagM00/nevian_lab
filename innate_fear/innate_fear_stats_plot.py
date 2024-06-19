@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 from scipy import stats
 
 # Function to calculate and plot
-def calculate_and_plot(file1, file2, trial_type, color1='blue', color2='red'):
+def calculate_and_plot(file1, file2, trial_type, color1='blue', color2='red', filename_prefix=''):
     # Define the index range
-    start_index = int(14.5 * 130)
-    end_index = int(15.5 * 130)
+    start_index = int(13.0 * 130)
+    end_index = int(14.0 * 130)
 
     # Loading the data
     data1 = np.load(file1)
@@ -77,11 +77,15 @@ def calculate_and_plot(file1, file2, trial_type, color1='blue', color2='red'):
     # Adding the figure legends without the box
     legend = ax.legend(frameon=False)
 
+    # Saving the plot
+    plt.savefig(f'{filename_prefix}_{trial_type}_mean_plot.png')
+
     # Displaying the plot
     plt.show()
+    plt.close()
 
 # Function to calculate and plot AUC
-def calculate_and_plot_auc(file1, file2, trial_type, color1='blue', color2='red'):
+def calculate_and_plot_auc(file1, file2, trial_type, color1='blue', color2='red', filename_prefix=''):
     # Loading the data
     data1 = np.load(file1)
     data2 = np.load(file2)
@@ -144,8 +148,12 @@ def calculate_and_plot_auc(file1, file2, trial_type, color1='blue', color2='red'
     # Adding the figure legends without the box
     legend = ax.legend(frameon=False)
 
+    # Saving the plot
+    plt.savefig(f'{filename_prefix}_{trial_type}_mean_plot.png')
+
     # Displaying the plot
     plt.show()
+    plt.close()
 
 # Prepare the pairs of files and the trial type
 file_pairs = [(('trace_water_all.npy', 'trace_tmt_all.npy'), 'All'), 
@@ -155,8 +163,8 @@ file_pairs = [(('trace_water_all.npy', 'trace_tmt_all.npy'), 'All'),
 
 # Calculate and plot for each pair of files
 for file_pair, trial_type in file_pairs:
-    calculate_and_plot(file_pair[0], file_pair[1], trial_type)
+    calculate_and_plot(file_pair[0], file_pair[1], trial_type, filename_prefix='plot_AVG')
 
 # Calculate and plot for each pair of files
 for file_pair, trial_type in file_pairs:
-    calculate_and_plot_auc(file_pair[0], file_pair[1], trial_type)
+    calculate_and_plot_auc(file_pair[0], file_pair[1], trial_type, filename_prefix='plot_AUC')
