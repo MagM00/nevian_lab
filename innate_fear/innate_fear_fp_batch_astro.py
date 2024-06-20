@@ -492,3 +492,43 @@ np.save('trace_water_inter_all.npy', np.array(trace_water_inter_all))
 np.save('trace_tmt_inter_all.npy', np.array(trace_tmt_inter_all))
 np.save('trace_water_late_all.npy', np.array(trace_water_late_all))
 np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
+
+
+
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report, accuracy_score
+
+# Prepare the data
+# Assuming trace_tmt_all and trace_water_all are the dFF signals for TMT and Water
+# Combine and label the data
+X = np.concatenate((trace_tmt_all, trace_water_all), axis=0)
+y = np.array([1] * len(trace_tmt_all) + [0] * len(trace_water_all))
+
+# Flatten the data for SVM input
+X = X.reshape(X.shape[0], -1)
+
+# Standardize the features
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the SVM model
+svm_model = SVC(kernel='linear', C=1)
+svm_model.fit(X_train, y_train)
+
+# Evaluate the model
+y_pred = svm_model.predict(X_test)
+print("SVM Classification Report:")
+print(classification_report(y_test, y_pred))
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Cross-validation
+cv_scores = cross_val_score(svm_model, X, y, cv=5)
+print("Cross-validation Accuracy Scores:", cv_scores)
+print("Mean Cross-validation Accuracy:", cv_scores.mean())
