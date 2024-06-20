@@ -538,7 +538,10 @@ from sklearn.metrics import mean_squared_error, r2_score
 # Assuming trace_data_matrix contains the dFF signals and the labels/intensity
 # Prepare the data
 X = np.array(trace_data_matrix).reshape(len(trace_data_matrix), -1)
-# Replace 'response_intensity' with the actual intensity values or labels
+
+# Define response intensity (for example, using a random array or a derived metric)
+response_intensity = np.random.rand(len(trace_data_matrix))  # Replace with actual intensity values if available
+
 y = np.array(response_intensity)
 
 # Split the data into training and testing sets
