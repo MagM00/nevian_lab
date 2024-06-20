@@ -495,8 +495,7 @@ np.save('trace_tmt_late_all.npy', np.array(trace_tmt_late_all))
 
 
 
-import numpy as np
-import pandas as pd
+
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
@@ -532,3 +531,30 @@ print("Accuracy:", accuracy_score(y_test, y_pred))
 cv_scores = cross_val_score(svm_model, X, y, cv=5)
 print("Cross-validation Accuracy Scores:", cv_scores)
 print("Mean Cross-validation Accuracy:", cv_scores.mean())
+
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Assuming trace_data_matrix contains the dFF signals and the labels/intensity
+# Prepare the data
+X = np.array(trace_data_matrix).reshape(len(trace_data_matrix), -1)
+# Replace 'response_intensity' with the actual intensity values or labels
+y = np.array(response_intensity)
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the Random Forest Regressor
+rf_model = RandomForestRegressor(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
+
+# Predict and evaluate the model
+y_pred = rf_model.predict(X_test)
+print("Random Forest Regression Report:")
+print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+print("R^2 Score:", r2_score(y_test, y_pred))
+
+# Cross-validation
+cv_scores = cross_val_score(rf_model, X, y, cv=5, scoring='neg_mean_squared_error')
+print("Cross-validation MSE Scores:", -cv_scores)
+print("Mean Cross-validation MSE:", -cv_scores.mean())
