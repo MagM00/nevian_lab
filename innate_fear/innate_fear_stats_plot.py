@@ -12,8 +12,8 @@ from scipy import stats
 # Function to calculate and plot
 def calculate_and_plot(file1, file2, trial_type, color1='blue', color2='red', filename_prefix=''):
     # Define the index range
-    start_index = int(13.0 * 130)
-    end_index = int(14.0 * 130)
+    start_index = int(14.0 * 130)
+    end_index = int(15.0 * 130)
 
     # Loading the data
     data1 = np.load(file1)
