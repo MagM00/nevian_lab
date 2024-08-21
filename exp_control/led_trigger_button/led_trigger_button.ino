@@ -1,4 +1,4 @@
-const int ledPin = 7;       // Pin for the LED
+const int ledPin = 8;       // Pin for the LED
 const int buttonPin = 13;   // Pin for the button
 
 void setup() {
