@@ -10,7 +10,7 @@ class VideoPlayer:
         self.window = window
         self.window.title(window_title)
 
-        logo_path = r'C:/Users/huang/codes/nevian_lab/video_processing/logo.ico'
+        logo_path = r'M:/Jun/software/logo.ico'
         logo_image = Image.open(logo_path)
         photo = ImageTk.PhotoImage(logo_image)
         self.window.iconphoto(False, photo)

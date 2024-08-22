@@ -8,7 +8,7 @@ a = Analysis(
     ['key_frame_label.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:/Users/huang/codes/nevian_lab/video_processing/logo.ico', '.')],
+    datas=[('M:/Jun/software/logo.ico', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
