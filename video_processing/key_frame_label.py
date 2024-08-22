@@ -322,5 +322,5 @@ class VideoPlayer:
 
 # Create a window and pass it to the video player
 root = tk.Tk()
-VideoPlayer(root, "Tkinter and OpenCV with Event Logger")
+VideoPlayer(root, "Key frame logger ©Jun Huang")
 root.mainloop()
