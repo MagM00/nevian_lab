@@ -1,3 +1,5 @@
+# pyinstaller key_frame_label.spec
+
 import tkinter as tk
 from tkinter import filedialog, ttk
 import cv2
