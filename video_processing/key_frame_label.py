@@ -284,7 +284,7 @@ class VideoPlayer:
     def jump_to_logged_frame(self, event):
         item = self.log_view.selection()[0]
         values = self.log_view.item(item, "values")
-        frame_no = values[2]
+        frame_no = int(values[2])
         event_text = values[1]
         response = values[3]
 
