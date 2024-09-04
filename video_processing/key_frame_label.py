@@ -283,10 +283,22 @@ class VideoPlayer:
 
     def jump_to_logged_frame(self, event):
         item = self.log_view.selection()[0]
-        frame_no = int(self.log_view.item(item, "values")[2])
+        values = self.log_view.item(item, "values")
+        frame_no = int(values[2])
+        event_text = values[1]
+        response = int(values[3])
+
+        # Update frame number
         self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
         self.slider.set(frame_no)
         self.update_frame_number(frame_no)
+
+        # Update event type
+        self.event_var.set(event_text)
+
+        # Update response state
+        self.response_var.set(bool(response))
+
         self.update()
 
     def modify_event(self):
