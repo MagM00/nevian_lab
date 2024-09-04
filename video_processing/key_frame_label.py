@@ -221,7 +221,7 @@ class VideoPlayer:
 
     def log_event(self):
         if self.vid and self.event_var.get():
-            current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
+            current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES)) - 1  # Subtract 1 here to align the UI and the log data
             event_text = self.event_var.get()
             if event_text in self.event_options:
                 event_index = len(self.log_data) + 1
