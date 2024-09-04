@@ -221,11 +221,11 @@ class VideoPlayer:
 
     def log_event(self):
         if self.vid and self.event_var.get():
-            current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
+            current_frame = self.get_current_frame()
             event_text = self.event_var.get()
             if event_text in self.event_options:
                 event_index = len(self.log_data) + 1
-                response = 1 if self.response_var.get() else 0
+                response = 1 if self.response_var.get() else 0  # Use integer
                 self.log_data.append([event_index, event_text, current_frame, response])
                 print(f"Logged Event: {event_text}, Frame: {current_frame}, Response: {response}")
                 
@@ -283,10 +283,22 @@ class VideoPlayer:
 
     def jump_to_logged_frame(self, event):
         item = self.log_view.selection()[0]
-        frame_no = int(self.log_view.item(item, "values")[2])
+        values = self.log_view.item(item, "values")
+        frame_no = int(values[2])
+        event_text = values[1]
+        response = int(float(values[3]))  # Convert to float first, then to int
+
+        # Update frame number
         self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
         self.slider.set(frame_no)
         self.update_frame_number(frame_no)
+
+        # Update event type
+        self.event_var.set(event_text)
+
+        # Update response state
+        self.response_var.set(bool(response))
+
         self.update()
 
     def modify_event(self):
@@ -296,7 +308,7 @@ class VideoPlayer:
             if new_event:
                 index = self.log_view.index(selected_item)
                 current_frame = self.log_data[index][2]
-                response = 1 if self.response_var.get() else 0
+                response = 1 if self.response_var.get() else 0  # Use integer
                 self.log_data[index] = [index+1, new_event, current_frame, response]
                 self.log_view.item(selected_item, values=(index+1, new_event, current_frame, response))
 
@@ -325,6 +337,7 @@ class VideoPlayer:
         file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
         if file_path:
             df = pd.read_excel(file_path)
+            df['Response'] = df['Response'].astype(int)  # Ensure Response is integer
             self.log_data = df.values.tolist()
             for i in self.log_view.get_children():
                 self.log_view.delete(i)
