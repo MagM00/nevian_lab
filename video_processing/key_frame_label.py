@@ -34,14 +34,19 @@ class VideoPlayer:
         self.log_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         # Treeview for displaying log data
-        self.log_view = ttk.Treeview(self.log_frame, columns=("Index", "Event", "Frame"), show="headings")
+        self.log_view = ttk.Treeview(self.log_frame, columns=("Index", "Event", "Frame", "Response"), show="headings")
         self.log_view.column("Index", width=40, anchor=tk.CENTER)
         self.log_view.column("Event", anchor=tk.CENTER)
         self.log_view.column("Frame", anchor=tk.CENTER)
+        self.log_view.column("Response", width=60, anchor=tk.CENTER)
         self.log_view.heading("Index", text="Index")
         self.log_view.heading("Event", text="Event")
         self.log_view.heading("Frame", text="Frame")
+        self.log_view.heading("Response", text="Response")
         self.log_view.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        # Bind double-click event to jump to frame
+        self.log_view.bind("<Double-1>", self.jump_to_logged_frame)
 
         # Adding vertical scrollbar for the Treeview
         self.tree_scroll = tk.Scrollbar(self.log_frame, orient="vertical", command=self.log_view.yview)
@@ -108,6 +113,11 @@ class VideoPlayer:
         self.btn_move_down = tk.Button(self.event_control_frame, text="Move Event Down", command=lambda: self.move_event(1))
         self.btn_move_down.pack(side=tk.LEFT)
 
+        # Response checkbox
+        self.response_var = tk.BooleanVar()
+        self.response_checkbox = tk.Checkbutton(self.event_control_frame, text="Response", variable=self.response_var)
+        self.response_checkbox.pack(side=tk.LEFT)
+
         # Bind Move Event Up and Move Event Down keys to corresponding methods
         self.window.bind("<Up>", lambda event: self.move_event(-1))
         self.window.bind("<Down>", lambda event: self.move_event(1))
@@ -170,7 +180,6 @@ class VideoPlayer:
         if self.key_press_time >= 5:  # If key is pressed continuously, adjust frame skip
             self.current_frame_skip = min(self.current_frame_skip + 5, self.max_frame_skip)
 
-
     def create_frame_navigation_buttons(self, frame):
         # Place frame navigation buttons centered
         navigation_buttons = ["   ⏪   1800   ", "   ⏪   900   ", "   ⏪   300   ", "   ⏪   100   ",
@@ -213,20 +222,18 @@ class VideoPlayer:
     def log_event(self):
         if self.vid and self.event_var.get():
             current_frame = int(self.vid.get(cv2.CAP_PROP_POS_FRAMES))
-            event_text = self.event_var.get()  # Directly use the selected event text
-            # Ensure the event_text is actually one of the options
+            event_text = self.event_var.get()
             if event_text in self.event_options:
-                event_index = len(self.log_data) + 1  # Index for the new event
-                self.log_data.append([event_index, event_text, current_frame])
-                print(f"Logged Event: {event_text}, Frame: {current_frame}")
+                event_index = len(self.log_data) + 1
+                response = 1 if self.response_var.get() else 0
+                self.log_data.append([event_index, event_text, current_frame, response])
+                print(f"Logged Event: {event_text}, Frame: {current_frame}, Response: {response}")
                 
-                # Insert log data into Treeview with index
-                new_entry = self.log_view.insert('', 'end', values=(event_index, event_text, current_frame))
+                new_entry = self.log_view.insert('', 'end', values=(event_index, event_text, current_frame, response))
                 
-                # Ensure the new entry is visible
                 self.log_view.see(new_entry)
                 
-                df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
+                df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame', 'Response'])
                 df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
 
     def update_frame_number(self, frame_no):
@@ -274,16 +281,24 @@ class VideoPlayer:
             self.update()
             self.window.focus_set()
 
+    def jump_to_logged_frame(self, event):
+        item = self.log_view.selection()[0]
+        frame_no = int(self.log_view.item(item, "values")[2])
+        self.vid.set(cv2.CAP_PROP_POS_FRAMES, frame_no)
+        self.slider.set(frame_no)
+        self.update_frame_number(frame_no)
+        self.update()
+
     def modify_event(self):
         selected_item = self.log_view.selection()
         if selected_item:
-            # Ask for new event details and update the log data and Treeview
             new_event = self.event_var.get()
             if new_event:
                 index = self.log_view.index(selected_item)
-                current_frame = self.log_data[index][2]  # Preserve the current frame number
-                self.log_data[index] = [index+1, new_event, current_frame]  # Update log data
-                self.log_view.item(selected_item, values=(index+1, new_event, current_frame))  # Update Treeview
+                current_frame = self.log_data[index][2]
+                response = 1 if self.response_var.get() else 0
+                self.log_data[index] = [index+1, new_event, current_frame, response]
+                self.log_view.item(selected_item, values=(index+1, new_event, current_frame, response))
 
     def delete_event(self):
         selected_item = self.log_view.selection()
@@ -297,15 +312,13 @@ class VideoPlayer:
         if selected_item:
             index = self.log_view.index(selected_item)
             if 0 <= index + direction < len(self.log_data):
-                # Swap events in log data
                 self.log_data[index], self.log_data[index + direction] = self.log_data[index + direction], self.log_data[index]
-                # Reinsert the swapped items in the Treeview
                 for i in [index, index + direction]:
-                    self.log_view.delete(i)
+                    self.log_view.delete(self.log_view.get_children()[i])
                     self.log_view.insert('', i, values=self.log_data[i])
 
     def sync_events(self):
-        df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame'])
+        df = pd.DataFrame(self.log_data, columns=['Index', 'Event', 'Frame', 'Response'])
         df.to_excel(os.path.splitext(self.video_source)[0] + "_log.xlsx", index=False)
 
     def load_events(self):
@@ -313,10 +326,8 @@ class VideoPlayer:
         if file_path:
             df = pd.read_excel(file_path)
             self.log_data = df.values.tolist()
-            # Clear existing Treeview entries
             for i in self.log_view.get_children():
                 self.log_view.delete(i)
-            # Load new entries into the Treeview
             for log in self.log_data:
                 self.log_view.insert('', 'end', values=log)
 
