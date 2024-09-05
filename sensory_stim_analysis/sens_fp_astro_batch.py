@@ -1,7 +1,13 @@
 import os
+import tkinter
+import pandas as pd
 import numpy as np
-from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
+from scipy import signal
+from data_import import import_ppd
+from scipy.signal import savgol_filter
+from scipy.stats import sem
+from scipy.ndimage import gaussian_filter1d
 
 def process_ppd(ppd_file_path, sampling_rate=130):
     # Extract the filename without the extension
@@ -22,7 +28,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     data['fit_405'] = fit_405
     data['dFF'] = dFF
 
-    # Create the figure and subplots
+    """     # Create the figure and subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
 
     # Plot 1
@@ -56,7 +62,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     fig.savefig(save_path, dpi=300)
 
     # Display the plots
-    plt.show()
+    plt.show() """
 
     # Index of np.diff(data['digital_1']) bigger than 0.5 or smaller than -0.5
     index_on = np.where(np.diff(data['digital_1']) > 0.5)[0]
@@ -71,7 +77,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     ttl_duration_new = np.delete(ttl_duration, indexes_to_remove)
 
     time_on_new = index_on_new / sampling_rate
-
+    """ 
         # Organize data into a dictionary
     data = {
         'mouse': {
@@ -177,7 +183,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
         'average_trace_cold': average_trace_cold,
         'average_trace_room': average_trace_room,
         'average_trace_warm': average_trace_warm,
-    }
+    } """
 
     # Define the file path and name
     #save_file_path = r'C:\files\data\sensory_stim\\ + file_name + '.npy'
@@ -187,7 +193,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
 
     vector = np.arange(index_on_new[0], index_on_new[0]+len(index_on_new)/2*60*130, 30*130)
     print(filename)
-    np.round((index_on_new-vector)/130)
+    print(np.round((index_on_new-vector)/130))
 
     return time_on_new
 
