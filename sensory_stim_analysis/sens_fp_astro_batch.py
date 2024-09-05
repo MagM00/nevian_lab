@@ -64,48 +64,6 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     # Display the plots
     plt.show() """
 
-        # Define stimulus event mapping
-    stim_dict = {
-        0: "0: Pinprick",
-        1: "1: 0.07g-Green",
-        2: "2: 0.4g-Dark blue",
-        3: "3: 2g-Purple",
-        4: "4: Cold water",
-        5: "5: Room temp",
-        6: "6: Hot water"
-    }
-
-    # Stimuli sequence (as provided in your example)
-    stim_sequence = [
-        1,1,1,3,3,3,2,2,2,0,0,0,5,5,5,6,6,6,4,4,4,
-        6,6,6,2,2,2,3,3,3,4,4,4,5,5,5,1,1,1,0,0,0,
-        4,4,4,1,1,1,2,2,2,5,5,5,3,3,3,6,6,6,0,0,0,
-        6,6,6,0,0,0,5,5,5,1,1,1,2,2,2,4,4,4,3,3,3,
-        4,4,4,6,6,6,1,1,1,5,5,5,0,0,0,2,2,2,3,3,3
-    ]
-
-    # Ensure index_on_new length matches stim_sequence
-    if len(index_on_new) != len(stim_sequence):
-        print(f"Error in {filename}, the number of stimulus detected is {len(index_on_new)}")
-        return
-
-    # Create the DataFrame
-    df = pd.DataFrame({
-        'Index': np.arange(1, len(stim_sequence) + 1),
-        'Event': [stim_dict[stim] for stim in stim_sequence],
-        'Frame': index_on_new,
-        'Response': 1
-    })
-
-    # Define the file path and name for the Excel file
-    excel_filename = f"{filename}.xlsx"
-    excel_file_path = os.path.join(os.path.dirname(ppd_file_path), excel_filename)
-
-    # Save the DataFrame as an Excel file
-    df.to_excel(excel_file_path, index=False)
-
-    print(f"Excel file saved as {excel_file_path}")
-
     # Index of np.diff(data['digital_1']) bigger than 0.5 or smaller than -0.5
     index_on = np.where(np.diff(data['digital_1']) > 0.5)[0]
     index_off = np.where(np.diff(data['digital_1']) < -0.5)[0]
@@ -244,6 +202,48 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     plt.plot(y)
     plt.show()
     plt.close() """
+
+    # Define stimulus event mapping
+    stim_dict = {
+        0: "0: Pinprick",
+        1: "1: 0.07g-Green",
+        2: "2: 0.4g-Dark blue",
+        3: "3: 2g-Purple",
+        4: "4: Cold water",
+        5: "5: Room temp",
+        6: "6: Hot water"
+    }
+
+    # Stimuli sequence (as provided in your example)
+    stim_sequence = [
+        1,1,1,3,3,3,2,2,2,0,0,0,5,5,5,6,6,6,4,4,4,
+        6,6,6,2,2,2,3,3,3,4,4,4,5,5,5,1,1,1,0,0,0,
+        4,4,4,1,1,1,2,2,2,5,5,5,3,3,3,6,6,6,0,0,0,
+        6,6,6,0,0,0,5,5,5,1,1,1,2,2,2,4,4,4,3,3,3,
+        4,4,4,6,6,6,1,1,1,5,5,5,0,0,0,2,2,2,3,3,3
+    ]
+
+    # Ensure index_on_new length matches stim_sequence
+    if len(index_on_new) != len(stim_sequence):
+        print(f"Error in {filename}, the number of stimulus detected is {len(index_on_new)}")
+        return
+
+    # Create the DataFrame
+    df = pd.DataFrame({
+        'Index': np.arange(1, len(stim_sequence) + 1),
+        'Event': [stim_dict[stim] for stim in stim_sequence],
+        'Frame': index_on_new,
+        'Response': 1
+    })
+
+    # Define the file path and name for the Excel file
+    excel_filename = f"{filename}.xlsx"
+    excel_file_path = os.path.join(os.path.dirname(ppd_file_path), excel_filename)
+
+    # Save the DataFrame as an Excel file
+    df.to_excel(excel_file_path, index=False)
+
+    print(f"Excel file saved as {excel_file_path}")
 
     return time_on_new
 
