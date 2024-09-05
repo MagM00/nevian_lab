@@ -72,6 +72,119 @@ def process_ppd(ppd_file_path, sampling_rate=130):
 
     time_on_new = index_on_new / sampling_rate
 
+        # Organize data into a dictionary
+    data = {
+        'mouse': {
+            'Stim': [
+                1,1,1,3,3,3,2,2,2,0,0,0,5,5,5,6,6,6,4,4,4,
+                6,6,6,2,2,2,3,3,3,4,4,4,5,5,5,1,1,1,0,0,0,
+                4,4,4,1,1,1,2,2,2,5,5,5,3,3,3,6,6,6,0,0,0,
+                6,6,6,0,0,0,5,5,5,1,1,1,2,2,2,4,4,4,3,3,3,
+                4,4,4,6,6,6,1,1,1,5,5,5,0,0,0,2,2,2,3,3,3
+            ],
+            'Time': time_on_new.tolist()
+        }
+    }
+
+    # Organize data into a dictionary
+    data = {
+        'mouse': {
+            'Stim': [
+                1,1,1,3,3,3,2,2,2,0,0,0,5,5,5,6,6,6,4,4,4,
+                6,6,6,2,2,2,3,3,3,4,4,4,5,5,5,1,1,1,0,0,0,
+                4,4,4,1,1,1,2,2,2,5,5,5,3,3,3,6,6,6,0,0,0,
+                6,6,6,0,0,0,5,5,5,1,1,1,2,2,2,4, 4,4,3,3,3,
+                4,4,4,6,6,6,1,1,1,5,5,5,0,0,0,2,2,2,3,3,3
+            ],
+            'Time': time_on_new.tolist()
+        }
+    }
+
+    # Use `data` as needed in your analysis
+
+    stim_data = data['mouse']['Stim']
+    time_stamps = data['mouse']['Time']
+
+    pinp_indexes = [i for i, stim in enumerate(stim_data) if stim == 0]
+    weak_indexes = [i for i, stim in enumerate(stim_data) if stim == 1]
+    mild_indexes = [i for i, stim in enumerate(stim_data) if stim == 2]
+    hard_indexes = [i for i, stim in enumerate(stim_data) if stim == 3]
+    cold_indexes = [i for i, stim in enumerate(stim_data) if stim == 4]
+    room_indexes = [i for i, stim in enumerate(stim_data) if stim == 5]
+    warm_indexes = [i for i, stim in enumerate(stim_data) if stim == 6]
+
+    pinp_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in pinp_indexes]
+    weak_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in weak_indexes]
+    mild_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in mild_indexes]
+    hard_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in hard_indexes]
+    cold_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in cold_indexes]
+    room_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in room_indexes]
+    warm_data_indexes = [round(float(time_stamps[i]) * sampling_rate) for i in warm_indexes]
+
+
+    trace_duration = 5  # 5 seconds before and 30 seconds after each data index
+
+    # Convert trace duration from seconds to data points
+    trace_duration_points = trace_duration * sampling_rate
+
+    # Function to analyze and plot data for different index sets
+    def analyze_and_plot(indexes, dFF, sampling_rate, pre_start=5, post_start=10):
+        trace_data_matrix = []
+
+        for index in indexes:
+            start = int(index - pre_start * sampling_rate)
+            end = int(index + post_start * sampling_rate)
+            trace_data = dFF[start:end]
+            time = np.arange(start, end) / sampling_rate
+
+            # Calculate the baseline value
+            baseline_start = int(index - 5 * sampling_rate)
+            baseline_end = int(index - 3 * sampling_rate)
+            baseline = np.mean(dFF[baseline_start:baseline_end])
+
+            # Compute the relative trace data
+            relative_trace_data = trace_data - baseline
+
+            # Append relative_trace_data to the matrix
+            trace_data_matrix.append(relative_trace_data)
+
+
+        return np.array(trace_data_matrix)
+
+    # Example usage for each data index set
+    trace_data_matrix_pinp = analyze_and_plot(pinp_data_indexes, dFF, sampling_rate)
+    trace_data_matrix_weak = analyze_and_plot(weak_data_indexes, dFF, sampling_rate)
+    trace_data_matrix_mild = analyze_and_plot(mild_data_indexes, dFF, sampling_rate)
+    trace_data_matrix_hard = analyze_and_plot(hard_data_indexes, dFF, sampling_rate)
+    trace_data_matrix_cold = analyze_and_plot(cold_data_indexes, dFF, sampling_rate)
+    trace_data_matrix_room = analyze_and_plot(room_data_indexes, dFF, sampling_rate)
+    trace_data_matrix_warm = analyze_and_plot(warm_data_indexes, dFF, sampling_rate)
+
+    # Calculate the average traces for each index set
+    average_trace_pinp = np.mean(trace_data_matrix_pinp, axis=0)
+    average_trace_weak = np.mean(trace_data_matrix_weak, axis=0)
+    average_trace_mild = np.mean(trace_data_matrix_mild, axis=0)
+    average_trace_hard = np.mean(trace_data_matrix_hard, axis=0)
+    average_trace_cold = np.mean(trace_data_matrix_cold, axis=0)
+    average_trace_room = np.mean(trace_data_matrix_room, axis=0)
+    average_trace_warm = np.mean(trace_data_matrix_warm, axis=0)
+
+    traces = {
+        'average_trace_pinp': average_trace_pinp,
+        'average_trace_weak': average_trace_weak,
+        'average_trace_mild': average_trace_mild,
+        'average_trace_hard': average_trace_hard,
+        'average_trace_cold': average_trace_cold,
+        'average_trace_room': average_trace_room,
+        'average_trace_warm': average_trace_warm,
+    }
+
+    # Define the file path and name
+    #save_file_path = r'C:\files\data\sensory_stim\1199.npy'
+
+    # Save the dictionary to a NumPy file
+    #np.save(save_file_path, traces)
+
     return time_on_new
 
 # List of PPD file paths
