@@ -180,10 +180,10 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     }
 
     # Define the file path and name
-    save_file_path = r'C:\files\data\sensory_stim\\ + file_name + '.npy'
+    #save_file_path = r'C:\files\data\sensory_stim\\ + file_name + '.npy'
 
     # Save the dictionary to a NumPy file
-    np.save(save_file_path, traces)
+    #np.save(save_file_path, traces)
 
     return time_on_new
 
