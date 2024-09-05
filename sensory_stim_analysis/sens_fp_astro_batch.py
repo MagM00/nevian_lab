@@ -196,8 +196,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     #print(np.round((index_on_new-vector)/130))
     gap = np.round((index_on_new-vector)/130)
     if len(index_on_new) != 105:
-        print(filename)
-        print(len(index_on_new))
+        print('Error in', filename, ', the number of stimulus detected is', len(index_on_new))
    
     """     y = uniform_filter1d(gap, size=5)
     plt.plot(y)
