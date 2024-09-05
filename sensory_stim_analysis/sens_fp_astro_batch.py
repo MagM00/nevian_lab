@@ -7,7 +7,7 @@ from scipy import signal
 from data_import import import_ppd
 from scipy.signal import savgol_filter
 from scipy.stats import sem
-from scipy.ndimage import gaussian_filter1d
+from scipy.ndimage import gaussian_filter1d, uniform_filter1d
 
 def process_ppd(ppd_file_path, sampling_rate=130):
     # Extract the filename without the extension
@@ -192,8 +192,17 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     #np.save(save_file_path, traces)
 
     vector = np.arange(index_on_new[0], index_on_new[0]+len(index_on_new)/2*60*130, 30*130)
-    print(filename)
-    print(np.round((index_on_new-vector)/130))
+    #print(filename)
+    #print(np.round((index_on_new-vector)/130))
+    gap = np.round((index_on_new-vector)/130)
+    if len(index_on_new) != 105:
+        print(filename)
+        print(len(index_on_new))
+   
+    """     y = uniform_filter1d(gap, size=5)
+    plt.plot(y)
+    plt.show()
+    plt.close() """
 
     return time_on_new
 
