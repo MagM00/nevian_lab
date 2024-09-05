@@ -223,17 +223,19 @@ def process_ppd(ppd_file_path, sampling_rate=130):
         4,4,4,6,6,6,1,1,1,5,5,5,0,0,0,2,2,2,3,3,3
     ]
 
-    # Ensure index_on_new length matches stim_sequence
-    """     if len(index_on_new) != len(stim_sequence):
-        print(f"Error in {filename}, the number of stimulus detected is {len(index_on_new)}")
-        return """
-
+    # Ensure both lists are of the same length by padding the shorter one with NaN
+    max_length = max(len(stim_sequence), len(index_on_new))
+    
+    # Pad stim_sequence and index_on_new if necessary
+    stim_sequence_padded = stim_sequence + [np.nan] * (max_length - len(stim_sequence))
+    index_on_new_padded = index_on_new + [np.nan] * (max_length - len(index_on_new))
+    
     # Create the DataFrame
     df = pd.DataFrame({
-        'Index': np.arange(1, len(stim_sequence) + 1),
-        'Event': [stim_dict[stim] for stim in stim_sequence],
-        'Frame': index_on_new,
-        'Response': 1
+        'Index': np.arange(1, max_length + 1),
+        'Event': [stim_dict.get(stim, np.nan) for stim in stim_sequence_padded],
+        'Frame': index_on_new_padded,
+        'Response': [1 if not np.isnan(frame) else np.nan for frame in index_on_new_padded]
     })
 
     # Define the file path and name for the Excel file
