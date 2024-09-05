@@ -185,6 +185,10 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     # Save the dictionary to a NumPy file
     #np.save(save_file_path, traces)
 
+    vector = np.arange(index_on_new[0], index_on_new[0]+len(index_on_new)/2*60*130, 30*130)
+    print(filename)
+    np.round((index_on_new-vector)/130)
+
     return time_on_new
 
 # List of PPD file paths
