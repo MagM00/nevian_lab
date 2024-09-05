@@ -224,9 +224,9 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     ]
 
     # Ensure index_on_new length matches stim_sequence
-    if len(index_on_new) != len(stim_sequence):
+    """     if len(index_on_new) != len(stim_sequence):
         print(f"Error in {filename}, the number of stimulus detected is {len(index_on_new)}")
-        return
+        return """
 
     # Create the DataFrame
     df = pd.DataFrame({
