@@ -226,6 +226,20 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     # Ensure index_on_new length matches stim_sequence
     if len(index_on_new) != len(stim_sequence):
         print(f"Error in {filename}, the number of stimulus detected is {len(index_on_new)}")
+        df = pd.DataFrame({
+        'Index': np.arange(1, len(index_on_new) + 1),
+        'Event': 'stim',
+        'Frame': index_on_new,
+        'Response': 1})
+        
+        # Define the file path and name for the Excel file
+        excel_filename = f"{filename}.xlsx"
+        excel_file_path = os.path.join(os.path.dirname(ppd_file_path), excel_filename)
+
+        # Save the DataFrame as an Excel file
+        df.to_excel(excel_file_path, index=False)
+
+        print(f"Excel file saved as {excel_file_path}")
         return
 
     # Create the DataFrame
