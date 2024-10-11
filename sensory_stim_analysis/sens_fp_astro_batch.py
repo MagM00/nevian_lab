@@ -273,6 +273,17 @@ ppd_file_paths = [
     r'H:\Jun\sensory_stim\astro\control\1201-2024-08-26-151315.ppd'
 ]
 
+ppd_file_paths = [
+    r'H:\Jun\sensory_stim\astro\sni\1193-2024-09-25-100942.ppd',
+    r'H:\Jun\sensory_stim\astro\sni\1194-2024-09-25-124601.ppd',
+    r'H:\Jun\sensory_stim\astro\sni\1195-2024-09-25-160328.ppd',
+    r'H:\Jun\sensory_stim\astro\sni\1196-2024-09-26-140713.ppd',
+    r'H:\Jun\sensory_stim\astro\sham\1198-2024-09-26-155349.ppd',
+    r'H:\Jun\sensory_stim\astro\sham\1199-2024-09-27-114043.ppd',
+    r'H:\Jun\sensory_stim\astro\sham\1200-2024-10-02-120908.ppd',
+    r'H:\Jun\sensory_stim\astro\sham\1201-2024-10-01-144637.ppd'
+]
+
 # Process each PPD file
 for ppd_file in ppd_file_paths:
     process_ppd(ppd_file)
