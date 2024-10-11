@@ -247,7 +247,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     df = pd.DataFrame({
         'Index': np.arange(1, len(stim_sequence) + 1),
         'Event': [stim_dict[stim] for stim in stim_sequence],
-        'Frame': gap,
+        'Frame': frame_on_new,
         'Response': 1
     })
 
