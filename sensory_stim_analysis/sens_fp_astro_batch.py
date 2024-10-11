@@ -194,7 +194,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     vector = np.arange(index_on_new[0], index_on_new[0]+len(index_on_new)/2*60*130, 30*130)
     #print(filename)
     #print(np.round((index_on_new-vector)/130))
-    gap = np.round((index_on_new-vector)/130)
+    gap = np.round((index_on_new-vector)/130*30)
     if len(index_on_new) != 105:
         print('Error in', filename, ', the number of stimulus detected is', len(index_on_new))
    
@@ -229,7 +229,7 @@ def process_ppd(ppd_file_path, sampling_rate=130):
         df = pd.DataFrame({
         'Index': np.arange(1, len(index_on_new) + 1),
         'Event': 'stim',
-        'Frame': index_on_new,
+        'Frame': gap,
         'Response': 1})
         
         # Define the file path and name for the Excel file
