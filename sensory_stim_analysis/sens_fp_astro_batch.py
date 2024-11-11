@@ -285,7 +285,7 @@ ppd_file_paths = [
     r'H:\Jun\sensory_stim\astro\sham\1201-2024-10-01-144637.ppd'
 ]
 
-# List of PPD file paths, below are the new batch of grabda mice, recorded pre surgery
+# List of PPD file paths, below are the new batch of grabda mice, recorded pre SNI/sham surgery
 
 ppd_file_paths = [
     r'H:\Jun\sensory_stim\grabda\fp\1489_ctrl-2024-11-06-150844.ppd',
