@@ -39,3 +39,5 @@ function videos_concatenation_optimized(input_dir, output_file, remove_raw)
     end
 end
 
+% example usage:
+% videos_concatenation_optimized('H:\Jun\sensory_stim\grabda\video\1489_ctrl', 'H:\Jun\sensory_stim\grabda\video\1489_ctrl.mp4', 1)
