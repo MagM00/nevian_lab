@@ -1,122 +1,82 @@
+import os
 import tkinter as tk
-from tkinter import filedialog, messagebox, ttk
+from tkinter import filedialog, messagebox
 import pandas as pd
-import numpy as np
 
-# Initialize main app window
+# Data import function for PPD files (simulating import_ppd from data_import.py)
+def import_ppd(filepath):
+    try:
+        data = pd.read_csv(filepath, sep="\t", skiprows=15, usecols=[0, 1], names=["Time", "Value"])
+        data.dropna(inplace=True)  # Remove any rows with missing values
+        return data
+    except Exception as e:
+        raise Exception(f"Failed to import PPD file: {e}")
+
+# Process PPD function
+def process_ppd(filepath, sampling_rate):
+    try:
+        data = import_ppd(filepath)
+        
+        # Calculate time step based on sampling rate
+        dt = 1 / sampling_rate
+        data["Time"] = data.index * dt  # Adjust time based on index and sampling rate
+        
+        # Save the processed data to a new CSV file
+        output_filepath = os.path.splitext(filepath)[0] + "_processed.csv"
+        data.to_csv(output_filepath, index=False)
+        
+        return output_filepath
+    except Exception as e:
+        raise Exception(f"Error processing file: {e}")
+
+# Function to select file
+def select_file():
+    file_path = filedialog.askopenfilename(filetypes=[("PPD Files", "*.ppd")])
+    file_path_var.set(file_path)
+
+# Function to process the file
+def process_file():
+    file_path = file_path_var.get()
+    sampling_rate = sampling_rate_var.get()
+    
+    if not file_path:
+        messagebox.showerror("Error", "Please select a PPD file.")
+        return
+    
+    try:
+        sampling_rate = int(sampling_rate)
+    except ValueError:
+        messagebox.showerror("Error", "Please enter a valid integer for sampling rate.")
+        return
+    
+    if not os.path.isfile(file_path):
+        messagebox.showerror("Error", "Invalid file path.")
+        return
+    
+    try:
+        # Process file and get the output filepath
+        output_filepath = process_ppd(file_path, sampling_rate)
+        messagebox.showinfo("Success", f"File processed successfully.\nOutput saved to {output_filepath}")
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
+
+# Set up the main application window
 root = tk.Tk()
-root.title("PPD File Data Explorer")
-root.geometry("800x600")
+root.title("PPD Data Processor")
 
-# Global dataframe variable
-df = pd.DataFrame()
+# File selection
+file_path_var = tk.StringVar()
+tk.Label(root, text="Select PPD File:").grid(row=0, column=0, padx=10, pady=10, sticky="e")
+tk.Entry(root, textvariable=file_path_var, width=50).grid(row=0, column=1, padx=10, pady=10)
+tk.Button(root, text="Browse", command=select_file).grid(row=0, column=2, padx=10, pady=10)
 
-# Function to load PPD file
-def load_ppd_file():
-    global df
-    file_path = filedialog.askopenfilename(filetypes=[("PPD Files", "*.ppd"), ("All Files", "*.*")])
-    if file_path:
-        try:
-            df = pd.read_csv(file_path, sep='\t')  # Adjust separator as needed
-            messagebox.showinfo("Success", "PPD file loaded successfully!")
-            display_data(df)
-            update_column_options()
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to load file: {e}")
+# Sampling rate input
+sampling_rate_var = tk.StringVar(value="130")  # Default sampling rate
+tk.Label(root, text="Sampling Rate (Hz):").grid(row=1, column=0, padx=10, pady=10, sticky="e")
+tk.Entry(root, textvariable=sampling_rate_var, width=10).grid(row=1, column=1, padx=10, pady=10, sticky="w")
 
-# Function to display data in Treeview
-def display_data(data):
-    # Clear existing treeview
-    for widget in data_frame.winfo_children():
-        widget.destroy()
-    
-    # Create treeview
-    tree = ttk.Treeview(data_frame, columns=list(data.columns), show='headings')
-    for col in data.columns:
-        tree.heading(col, text=col)
-        tree.column(col, width=100)
-    
-    # Insert rows
-    for _, row in data.iterrows():
-        tree.insert("", "end", values=list(row))
-    
-    tree.pack(fill="both", expand=True)
+# Process button
+tk.Button(root, text="Process File", command=process_file, width=20).grid(row=2, column=0, columnspan=3, padx=10, pady=20)
 
-# Update column options in dropdowns
-def update_column_options():
-    columns = df.columns.tolist()
-    column_select["values"] = columns
-    column_select.current(0)  # Set default selection
-    filter_column_select["values"] = columns
-    filter_column_select.current(0)
-
-# Function to calculate statistics
-def calculate_stats():
-    selected_col = column_select.get()
-    if selected_col in df.columns:
-        mean = df[selected_col].mean()
-        median = df[selected_col].median()
-        std_dev = df[selected_col].std()
-        stats_text.set(f"Mean: {mean:.2f}\nMedian: {median:.2f}\nStd Dev: {std_dev:.2f}")
-    else:
-        messagebox.showerror("Error", "Select a valid column for statistics.")
-
-# Function to filter data by column and range
-def filter_data():
-    filter_col = filter_column_select.get()
-    if filter_col in df.columns:
-        try:
-            min_val = float(min_value.get())
-            max_val = float(max_value.get())
-            filtered_df = df[(df[filter_col] >= min_val) & (df[filter_col] <= max_val)]
-            display_data(filtered_df)
-        except ValueError:
-            messagebox.showerror("Error", "Enter valid numeric values for filtering.")
-    else:
-        messagebox.showerror("Error", "Select a valid column to filter.")
-
-# UI layout
-load_button = tk.Button(root, text="Load PPD File", command=load_ppd_file)
-load_button.pack(pady=10)
-
-# Frame for data display
-data_frame = tk.Frame(root)
-data_frame.pack(fill="both", expand=True)
-
-# Column selection for statistics
-column_select_frame = tk.Frame(root)
-column_select_frame.pack(pady=10)
-
-tk.Label(column_select_frame, text="Select Column for Stats:").grid(row=0, column=0)
-column_select = ttk.Combobox(column_select_frame, state="readonly")
-column_select.grid(row=0, column=1)
-
-calculate_button = tk.Button(column_select_frame, text="Calculate Stats", command=calculate_stats)
-calculate_button.grid(row=0, column=2, padx=5)
-
-# Display stats result
-stats_text = tk.StringVar()
-stats_label = tk.Label(root, textvariable=stats_text, font=("Arial", 10))
-stats_label.pack(pady=5)
-
-# Filtering options
-filter_frame = tk.Frame(root)
-filter_frame.pack(pady=10)
-
-tk.Label(filter_frame, text="Filter Column:").grid(row=0, column=0)
-filter_column_select = ttk.Combobox(filter_frame, state="readonly")
-filter_column_select.grid(row=0, column=1)
-
-tk.Label(filter_frame, text="Min Value:").grid(row=0, column=2)
-min_value = tk.Entry(filter_frame, width=10)
-min_value.grid(row=0, column=3)
-
-tk.Label(filter_frame, text="Max Value:").grid(row=0, column=4)
-max_value = tk.Entry(filter_frame, width=10)
-max_value.grid(row=0, column=5)
-
-filter_button = tk.Button(filter_frame, text="Apply Filter", command=filter_data)
-filter_button.grid(row=0, column=6, padx=5)
-
-# Run the app
+# Run the main loop
 root.mainloop()
