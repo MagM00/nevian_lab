@@ -285,6 +285,19 @@ ppd_file_paths = [
     r'H:\Jun\sensory_stim\astro\sham\1201-2024-10-01-144637.ppd'
 ]
 
+# List of PPD file paths, below are the new batch of grabda mice, recorded pre surgery
+
+ppd_file_paths = [
+    r'H:\Jun\sensory_stim\grabda\fp\1489_ctrl-2024-11-06-150844.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1490_ctrl-2024-11-06-164643.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1491_ctrl-2024-11-06-181935.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1492_ctrl-2024-11-06-230432.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1497_ctrl-2024-11-07-121739.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1498_ctrl-2024-11-07-144614.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1499_ctrl-2024-11-07-155720.ppd',
+    r'H:\Jun\sensory_stim\grabda\fp\1500_ctrl-2024-11-07-172610.ppd'
+]
+
 # Process each PPD file
 for ppd_file in ppd_file_paths:
     process_ppd(ppd_file)
