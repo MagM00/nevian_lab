@@ -1,82 +1,64 @@
 import os
-import tkinter as tk
-from tkinter import filedialog, messagebox
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.ndimage import gaussian_filter1d
+from data_import import import_ppd
 
-# Data import function for PPD files (simulating import_ppd from data_import.py)
-def import_ppd(filepath):
-    try:
-        data = pd.read_csv(filepath, sep="\t", skiprows=15, usecols=[0, 1], names=["Time", "Value"])
-        data.dropna(inplace=True)  # Remove any rows with missing values
-        return data
-    except Exception as e:
-        raise Exception(f"Failed to import PPD file: {e}")
+def process_ppd(ppd_file_path, sampling_rate=130):
+    # Extract the filename without the extension
+    filename = os.path.splitext(os.path.basename(ppd_file_path))[0]
 
-# Process PPD function
-def process_ppd(filepath, sampling_rate):
-    try:
-        data = import_ppd(filepath)
-        
-        # Calculate time step based on sampling rate
-        dt = 1 / sampling_rate
-        data["Time"] = data.index * dt  # Adjust time based on index and sampling rate
-        
-        # Save the processed data to a new CSV file
-        output_filepath = os.path.splitext(filepath)[0] + "_processed.csv"
-        data.to_csv(output_filepath, index=False)
-        
-        return output_filepath
-    except Exception as e:
-        raise Exception(f"Error processing file: {e}")
+    # Load the data from the PPD file
+    data = import_ppd(ppd_file_path, low_pass=20, high_pass=0.001)
 
-# Function to select file
-def select_file():
-    file_path = filedialog.askopenfilename(filetypes=[("PPD Files", "*.ppd")])
-    file_path_var.set(file_path)
+    # Convert sample index to time vector
+    time = np.arange(len(data['analog_1'])) / sampling_rate
 
-# Function to process the file
-def process_file():
-    file_path = file_path_var.get()
-    sampling_rate = sampling_rate_var.get()
-    
-    if not file_path:
-        messagebox.showerror("Error", "Please select a PPD file.")
-        return
-    
-    try:
-        sampling_rate = int(sampling_rate)
-    except ValueError:
-        messagebox.showerror("Error", "Please enter a valid integer for sampling rate.")
-        return
-    
-    if not os.path.isfile(file_path):
-        messagebox.showerror("Error", "Invalid file path.")
-        return
-    
-    try:
-        # Process file and get the output filepath
-        output_filepath = process_ppd(file_path, sampling_rate)
-        messagebox.showinfo("Success", f"File processed successfully.\nOutput saved to {output_filepath}")
-    except Exception as e:
-        messagebox.showerror("Error", str(e))
+    # dFF using 405 fit as baseline
+    reg = np.polyfit(data['analog_2'], data['analog_1'], 1)  # ch1 is 465nm, ch2 is 405nm
+    fit_405 = reg[0] * data['analog_2'] + reg[1]
+    dFF = (data['analog_1'] - fit_405) / fit_405  # deltaF/F
+    dFF = gaussian_filter1d(dFF, sigma=2)
 
-# Set up the main application window
-root = tk.Tk()
-root.title("PPD Data Processor")
+    data['fit_405'] = fit_405
+    data['dFF'] = dFF
 
-# File selection
-file_path_var = tk.StringVar()
-tk.Label(root, text="Select PPD File:").grid(row=0, column=0, padx=10, pady=10, sticky="e")
-tk.Entry(root, textvariable=file_path_var, width=50).grid(row=0, column=1, padx=10, pady=10)
-tk.Button(root, text="Browse", command=select_file).grid(row=0, column=2, padx=10, pady=10)
+    # Create the figure and subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6))
 
-# Sampling rate input
-sampling_rate_var = tk.StringVar(value="130")  # Default sampling rate
-tk.Label(root, text="Sampling Rate (Hz):").grid(row=1, column=0, padx=10, pady=10, sticky="e")
-tk.Entry(root, textvariable=sampling_rate_var, width=10).grid(row=1, column=1, padx=10, pady=10, sticky="w")
+    # Plot 1: Raw and fitted signals
+    ax1.plot(time, data['analog_1'], label='analog_1')
+    ax1.plot(time, data['analog_2'], label='analog_2')
+    ax1.plot(time, data['fit_405'], label='fit_405', linestyle='--')
+    ax1.set_xlabel('Time (s)')
+    ax1.set_ylabel('Signal Intensity')
+    ax1.set_title('Raw Signals and Fitted Baseline')
+    ax1.legend()
 
-# Process button
-tk.Button(root, text="Process File", command=process_file, width=20).grid(row=2, column=0, columnspan=3, padx=10, pady=20)
+    # Plot 2: dFF signal
+    ax2.plot(time, data['dFF'], label='dFF', color='orange')
+    ax2.set_xlabel('Time (s)')
+    ax2.set_ylabel('dFF')
+    ax2.set_title('dFF Signal')
+    ax2.legend()
 
-# Run the main loop
-root.mainloop()
+    # Adjust layout and set the figure title
+    plt.tight_layout()
+    fig.suptitle(f'{filename} Data Overview', fontsize=14)
+    fig.subplots_adjust(top=0.88)
+
+    # Save and display the figure
+    save_path = os.path.join(os.path.dirname(ppd_file_path), filename + '.png')
+    fig.savefig(save_path, dpi=300)
+    plt.show()
+
+# Example PPD file paths
+ppd_file_paths = [
+    r'H:\Jun\sensory_stim\astro\control\1193-2024-08-22-131301.ppd',
+    # Add more paths as needed
+]
+
+# Process and plot each PPD file
+for ppd_file in ppd_file_paths:
+    process_ppd(ppd_file)
