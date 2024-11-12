@@ -78,8 +78,6 @@ def process_ppd(ppd_file_path, first_frame):
     index_off_new = np.delete(index_off, indexes_to_remove)
     ttl_duration_new = np.delete(ttl_duration, indexes_to_remove)
 
-    first_frame = 2762
-
     time_on_new = index_on_new / sampling_rate
     frame_on_new = np.round((index_on_new) / sampling_rate * 30) + first_frame - np.round((index_on_new[0]) / sampling_rate * 30)
     """ 
