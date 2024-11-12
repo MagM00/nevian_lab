@@ -226,12 +226,33 @@ def process_ppd(ppd_file_path, sampling_rate=130):
 
     # Ensure index_on_new length matches stim_sequence
     if len(index_on_new) != len(stim_sequence):
-        print(f"Error in {filename}, the number of stimulus detected is {len(index_on_new)}")
+        print(f"Warning: {filename} has {len(index_on_new)} stimuli instead of expected {len(stim_sequence)}")
+        
+        # Create DataFrame with available data
+        if len(index_on_new) < len(stim_sequence):
+            # If fewer stimuli than expected, use only available data
+            df = pd.DataFrame({
+                'Index': np.arange(1, len(index_on_new) + 1),
+                'Event': [stim_dict[stim] for stim in stim_sequence[:len(index_on_new)]],
+                'Frame': frame_on_new,
+                'Response': 1
+            })
+        else:
+            # If more stimuli than expected, truncate to expected length
+            df = pd.DataFrame({
+                'Index': np.arange(1, len(stim_sequence) + 1),
+                'Event': [stim_dict[stim] for stim in stim_sequence],
+                'Frame': frame_on_new[:len(stim_sequence)],
+                'Response': 1
+            })
+    else:
+        # Create DataFrame with all data when length matches
         df = pd.DataFrame({
-        'Index': np.arange(1, len(index_on_new) + 1),
-        'Event': 'stim',
-        'Frame': frame_on_new,
-        'Response': 1})
+            'Index': np.arange(1, len(stim_sequence) + 1),
+            'Event': [stim_dict[stim] for stim in stim_sequence],
+            'Frame': frame_on_new,
+            'Response': 1
+        })
         
         # Define the file path and name for the Excel file
         excel_filename = f"{filename}.xlsx"
@@ -242,14 +263,6 @@ def process_ppd(ppd_file_path, sampling_rate=130):
 
         print(f"Excel file saved as {excel_file_path}")
         return
-
-    # Create the DataFrame
-    df = pd.DataFrame({
-        'Index': np.arange(1, len(stim_sequence) + 1),
-        'Event': [stim_dict[stim] for stim in stim_sequence],
-        'Frame': frame_on_new,
-        'Response': 1
-    })
 
     # Define the file path and name for the Excel file
     excel_filename = f"{filename}.xlsx"
