@@ -9,12 +9,14 @@ from scipy.signal import savgol_filter
 from scipy.stats import sem
 from scipy.ndimage import gaussian_filter1d, uniform_filter1d
 
-def process_ppd(ppd_file_path, sampling_rate=130):
+def process_ppd(ppd_file_path, first_frame):
     # Extract the filename without the extension
     filename = os.path.splitext(os.path.basename(ppd_file_path))[0]
 
     # Load the data from the PPD file
     data = import_ppd(ppd_file_path, low_pass=20, high_pass=0.001)
+
+    sampling_rate=130
 
     # Convert sample index to time vector
     time = np.arange(len(data['analog_1'])) / sampling_rate
@@ -76,8 +78,10 @@ def process_ppd(ppd_file_path, sampling_rate=130):
     index_off_new = np.delete(index_off, indexes_to_remove)
     ttl_duration_new = np.delete(ttl_duration, indexes_to_remove)
 
+    first_frame = 2762
+
     time_on_new = index_on_new / sampling_rate
-    frame_on_new = np.round((index_on_new) / sampling_rate * 30) + 2762 - np.round((index_on_new[0]) / sampling_rate * 30)
+    frame_on_new = np.round((index_on_new) / sampling_rate * 30) + first_frame - np.round((index_on_new[0]) / sampling_rate * 30)
     """ 
         # Organize data into a dictionary
     data = {
@@ -311,6 +315,17 @@ ppd_file_paths = [
     r'H:\Jun\sensory_stim\grabda\fp\1500_ctrl-2024-11-07-172610.ppd'
 ]
 
+first_frame_values = [
+    2762,
+    2762,
+    2762,
+    2762,
+    2762,
+    2762,
+    2762,
+    2762
+]
+
 # Process each PPD file
-for ppd_file in ppd_file_paths:
-    process_ppd(ppd_file)
+for ppd_file, first_frame in zip(ppd_file_paths, first_frame_values):
+    process_ppd(ppd_file, first_frame)
