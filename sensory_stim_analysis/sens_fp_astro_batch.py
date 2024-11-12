@@ -200,9 +200,7 @@ def process_ppd(ppd_file_path, first_frame):
     #print(filename)
     #print(np.round((index_on_new-vector)/130))
     gap = np.round((index_on_new-vector)/130)
-    if len(index_on_new) != 105:
-        print('Error in', filename, ', the number of stimulus detected is', len(index_on_new))
-   
+
     """     y = uniform_filter1d(gap, size=5)
     plt.plot(y)
     plt.show()
@@ -316,14 +314,14 @@ ppd_file_paths = [
 ]
 
 first_frame_values = [
-    2762,
-    2762,
-    2762,
-    2762,
-    2762,
-    2762,
-    2762,
-    2762
+    2454,
+    1403,
+    1447,
+    1306,
+    1166,
+    1199,
+    1260,
+    1413
 ]
 
 # Process each PPD file
